@@ -36,6 +36,12 @@ void default_lagscope_test(struct lagscope_test *test)
 	test->duration         = DEFAULT_TEST_DURATION_SEC;	 //60 s
 	test->iteration        = DEFAULT_TEST_ITERATION;	 //1000
 	test->interval         = DEFAULT_TEST_INTERVAL_SEC;	 //1 s
+
+	test->hist             = false;
+	test->hist_start       = HIST_DEFAULT_START_AT;	 	 //0
+	test->hist_len         = HIST_DEFAULT_INTERVAL_LEN;	 //100
+	test->hist_count       = HIST_DEFAULT_INTERVAL_COUNT;	 //10
+
 	test->verbose          = false;
 }
 

@@ -38,6 +38,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	double max_latency = 0;
 	double min_latency = 60000; //60 seconds
 	double sum_latency = 0;
+	uint64_t histogram[HIST_MAX_INTERVAL_COUNT] = {0};
+	uint64_t hist_index = 0;
 
 	verbose_log = test->verbose;
 
@@ -173,15 +175,16 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
-		latency = get_time_diff(&recv_time, &send_time) * 1000;
+		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
-		asprintf(&log, "Reply from %s: bytes=%d time=%.3fms",
+		asprintf(&log, "Reply from %s: bytes=%d time=%.3fus",
 				ip_address_str,
 				n,
 				latency);
 		PRINT_DBG_FREE(log);
 
 		n_pings++;
+		/* calculate max. avg. min. */
 		sum_latency += latency;
 		if (max_latency < latency)
 			max_latency = latency;
@@ -191,6 +194,20 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		if (test->test_mode == PING_ITERATION)
 			if (n_pings >= test->iteration)
 				break;
+
+		/* fill the histogram array */
+		if (test->hist) {
+			if (latency < test->hist_start) {
+				hist_index = 0;
+			}
+			else {
+				hist_index = ((latency - test->hist_start) / test->hist_len + 1);
+				if (hist_index > test->hist_count) {
+					hist_index = test->hist_count + 1;
+				}
+			}
+			histogram[hist_index]++;
+		}
 
 		sleep(test->interval); //sleep for ping interval, for example, 1 second
 	}	
@@ -204,11 +221,20 @@ finished:
 	asprintf(&log, "\tNumber of successful Pings: %ld", n_pings);
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
-		asprintf(&log, "\tMinimum = %.3fms, Maximum = %.3fms, Average = %.3fms",
+		asprintf(&log, "\tMinimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
 			min_latency,
 			max_latency,
 			sum_latency/n_pings);
 		PRINT_INFO_FREE(log);
+	}
+	if (test->hist) {
+		printf("\nInterval(usec)\t Frequency\n");
+		if (test->hist_start > 0) {
+			printf("%7d \t %" PRIu64 "\n", 0, histogram[0]);
+		}
+		for (i = 1; i < (test->hist_count + 2); i++) {
+			printf("%7d \t %" PRIu64 "\n", test->hist_start+((i-1)*test->hist_len), histogram[i]);
+		}
 	}
 
 	/* free resource */

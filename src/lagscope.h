@@ -36,6 +36,11 @@ struct lagscope_test
 	int     duration;            /* '-t' for total duration in sec of test */
 	int     iteration;           /* '-n' for test iteration */
 	int     interval;            /* '-i' for ping interval */
+
+	bool    hist;                /* '-H' for histogram report */
+	int     hist_start;          /* '-a' for histogram 1st interval start value */
+	int     hist_len;            /* '-l' for length of histogram intervals */
+	int     hist_count;          /* '-c' for count of histogram intervals */
 	/* end of client-only parameters */
 
 	bool    verbose;             /* '-V' for verbose logging */

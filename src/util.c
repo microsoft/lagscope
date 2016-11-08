@@ -46,6 +46,12 @@ void print_flags(struct lagscope_test *test)
 			printf("%s:\t\t\t %d\n", "test iteration", test->iteration);
 		}
 		printf("%s:\t\t %d\n", "test interval (sec)", test->interval);
+		if (test->hist) {
+			printf("%s:\t\t %s\n", "histogram report", "enabled");
+			printf("%s: %d\n", "histogram 1st interval start at", test->hist_start);
+			printf("%s:\t %d\n", "histogram length of intervals", test->hist_len);
+			printf("%s:\t %d\n", "histogram count of intervals", test->hist_count);
+		}
 	}
 
 	printf("%s:\t\t\t %s\n", "verbose mode", test->verbose ? "enabled" : "disabled");
@@ -55,7 +61,7 @@ void print_flags(struct lagscope_test *test)
 void print_usage()
 {
 	printf("Author: %s\n", AUTHOR_NAME);
-	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-V|-h]\n\n");
+	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-H|-a|-l|-c|-V|-h]\n\n");
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
 	printf("\t-D   Run as daemon\n");
@@ -72,6 +78,11 @@ void print_usage()
 	printf("\t-n   [CLIENT ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
 	printf("\t-i   [CLIENT ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
 	printf("\t     '-n' will be ignored if '-t' provided\n");
+
+	printf("\t-H   [CLIENT ONLY] print histogram of per-iteration latency values\n");
+	printf("\t-a   [CLIENT ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
+	printf("\t-l   [CLIENT ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
+	printf("\t-c   [CLIENT ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
@@ -117,8 +128,29 @@ int verify_args(struct lagscope_test *test)
 	}
 
 	if (!test->server_role && !test->client_role) {
-		PRINT_INFO("no role specified. use receiver role");
+		PRINT_INFO("no role specified; use receiver role");
 		test->server_role = true;
+	}
+
+	if (test->server_role) {
+		if (test->hist) {
+			PRINT_ERR("histogram report is not supported in receiver side; ignored.");
+		}
+	}
+
+	if (test->client_role) {
+		if (test->hist_start < 0) {
+			PRINT_ERR("histogram interval start value provided is invalid; use default value.");
+			test->hist_start = HIST_DEFAULT_START_AT;
+		}
+		if (test->hist_count > HIST_MAX_INTERVAL_COUNT_USER) {
+			PRINT_ERR("count of histogram intervals is too big; use the max allowed value.");
+			test->hist_start = HIST_MAX_INTERVAL_COUNT_USER;
+		}
+		if (test->hist_count < 1) {
+			PRINT_ERR("count of histogram intervals is too small; use the default value.");
+			test->hist_start = HIST_DEFAULT_INTERVAL_COUNT;
+		}
 	}
 
 	if (test->msg_size < 1) {
@@ -127,12 +159,12 @@ int verify_args(struct lagscope_test *test)
 	}
 
 	if (test->test_mode == TIME_DURATION && test->duration < 1 ) {
-		PRINT_INFO("invalid test duration. use default value.");
+		PRINT_INFO("invalid test duration; use default value.");
 		test->duration  = DEFAULT_TEST_DURATION_SEC;
 	}
 
 	if (test->test_mode == PING_ITERATION && test->iteration < 1 ) {
-		PRINT_INFO("invalid ping iteration. use default value.");
+		PRINT_INFO("invalid ping iteration; use default value.");
 		test->iteration = DEFAULT_TEST_ITERATION;
 	}
 
@@ -159,6 +191,10 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 		{"duration", required_argument, NULL, 't'},
 		{"iteration", required_argument, NULL, 'n'},
 		{"interval", required_argument, NULL, 'i'},
+		{"hist", no_argument, NULL, 'H'},
+		{"hist-start", required_argument, NULL, 'a'},
+		{"hist-len", required_argument, NULL, 'l'},
+		{"hist-count", required_argument, NULL, 'c'},
 		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -166,7 +202,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:Ha:l:c:Vh", longopts, NULL)) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -223,6 +259,22 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'i':
 			test->interval = atoi(optarg);
+			break;
+
+		case 'H':
+			test->hist = true;
+			break;
+
+		case 'a':
+			test->hist_start = atoi(optarg);
+			break;
+
+		case 'l':
+			test->hist_len = atoi(optarg);
+			break;
+
+		case 'c':
+			test->hist_count = atoi(optarg);
 			break;
 
 		case 'V':
