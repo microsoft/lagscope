@@ -38,8 +38,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	double max_latency = 0;
 	double min_latency = 60000; //60 seconds
 	double sum_latency = 0;
-	uint64_t histogram[HIST_MAX_INTERVAL_COUNT] = {0};
-	uint64_t hist_index = 0;
+	int64_t histogram[HIST_MAX_INTERVAL_COUNT] = {0};
+	int64_t hist_index = 0;
 
 	verbose_log = test->verbose;
 
@@ -54,7 +54,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = test->domain;
 	hints.ai_socktype = test->protocol;
-	asprintf(&port_str, "%d", test->server_port);
+	ASPRINTF(&port_str, "%d", test->server_port);
 	if (getaddrinfo(test->bind_address, port_str, &hints, &serv_info) != 0) {
 		PRINT_ERR("cannot get address info for receiver");
 		return 0;
@@ -72,7 +72,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		}
 		sendbuff = test->send_buf_size;	
 		if (setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (char *) &sendbuff, sizeof(sendbuff)) < 0){
-			asprintf(&log, "cannot set socket send buffer size to: %d", sendbuff);
+			ASPRINTF(&log, "cannot set socket send buffer size to: %d", sendbuff);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -80,7 +80,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		}
 		recvbuff = test->recv_buf_size;
 		if (setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, (char *) &recvbuff, sizeof(recvbuff)) < 0){
-			asprintf(&log, "cannot set socket receive buffer size to: %d", recvbuff);
+			ASPRINTF(&log, "cannot set socket receive buffer size to: %d", recvbuff);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -102,7 +102,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		}
 
 		if (( i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) < 0 ){
-			asprintf(&log, "failed to bind socket: %d to a local ephemeral port. errno = %d", sockfd, errno);
+			ASPRINTF(&log, "failed to bind socket: %d to a local ephemeral port. errno = %d", sockfd, errno);
 			PRINT_ERR_FREE(log);
 		}
 
@@ -110,11 +110,11 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		ip_address_str = retrive_ip_address_str((struct sockaddr_storage *)p->ai_addr, ip_address_str, ip_address_max_size);
 		if (( i = connect(sockfd, p->ai_addr, p->ai_addrlen)) < 0){
 			if (i == -1){
-				asprintf(&log, "failed to connect to receiver: %s:%d on socket: %d. errno = %d", ip_address_str, test->server_port, sockfd, errno);
+				ASPRINTF(&log, "failed to connect to receiver: %s:%d on socket: %d. errno = %d", ip_address_str, test->server_port, sockfd, errno);
 				PRINT_ERR_FREE(log);
 			}
 			else {
-				asprintf(&log, "failed to connect to receiver: %s:%d on socket: %d. error code = %d", ip_address_str, test->server_port, sockfd, i);
+				ASPRINTF(&log, "failed to connect to receiver: %s:%d on socket: %d. error code = %d", ip_address_str, test->server_port, sockfd, i);
 				PRINT_ERR_FREE(log);
 			}
 			freeaddrinfo(serv_info);
@@ -129,11 +129,11 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 
 	/* get local TCP ephemeral port number assigned, for logging */
 	if (getsockname(sockfd, (struct sockaddr *) &local_addr, &local_addr_size) != 0){
-		asprintf(&log, "failed to get local address information for socket: %d", sockfd);
+		ASPRINTF(&log, "failed to get local address information for socket: %d", sockfd);
 		PRINT_ERR_FREE(log);
 	}
 
-	asprintf(&log, "New connection: local:%d [socket:%d] --> %s:%d",
+	ASPRINTF(&log, "New connection: local:%d [socket:%d] --> %s:%d",
 			ntohs(test->domain == AF_INET?
 					((struct sockaddr_in *)&local_addr)->sin_port:
 					((struct sockaddr_in6 *)&local_addr)->sin6_port),
@@ -177,7 +177,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		recv_time = now;
 		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
-		asprintf(&log, "Reply from %s: bytes=%d time=%.3fus",
+		ASPRINTF(&log, "Reply from %s: bytes=%d time=%.3fus",
 				ip_address_str,
 				n,
 				latency);
@@ -216,12 +216,12 @@ finished:
 	PRINT_INFO("TEST COMPLETED.");
 
 	/* print ping statistics */
-	asprintf(&log, "Ping statistics for %s:", ip_address_str);
+	ASPRINTF(&log, "Ping statistics for %s:", ip_address_str);
 	PRINT_INFO_FREE(log);
-	asprintf(&log, "\tNumber of successful Pings: %ld", n_pings);
+	ASPRINTF(&log, "\tNumber of successful Pings: %ld", n_pings);
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
-		asprintf(&log, "\tMinimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
+		ASPRINTF(&log, "\tMinimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
 			min_latency,
 			max_latency,
 			sum_latency/n_pings);
@@ -268,7 +268,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = test->domain;
 	hints.ai_socktype = test->protocol;
-	asprintf(&port_str, "%d", test->server_port);
+	ASPRINTF(&port_str, "%d", test->server_port);
 	if (getaddrinfo(test->bind_address, port_str, &hints, &serv_info) != 0) {
 		PRINT_ERR("cannot get address info for receiver");
 		return -1;
@@ -292,7 +292,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 		}
 
 		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *) &opt, sizeof(opt)) < 0){
-			asprintf(&log, "cannot set socket options SO_REUSEADDR: %d", sockfd);
+			ASPRINTF(&log, "cannot set socket options SO_REUSEADDR: %d", sockfd);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -302,7 +302,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 
 		opt = 0;
 		if (setsockopt(sockfd, IPPROTO_TCP, TCP_QUICKACK, (char *) &opt, sizeof(opt)) < 0) {
-			asprintf(&log, "cannot set socket options TCP_QUICKACK: %d", sockfd);
+			ASPRINTF(&log, "cannot set socket options TCP_QUICKACK: %d", sockfd);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -312,7 +312,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 
 		sendbuff = test->send_buf_size;
 		if (setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (char *) &sendbuff, sizeof(sendbuff)) < 0){
-			asprintf(&log, "cannot set socket send buffer size to: %d", sendbuff);
+			ASPRINTF(&log, "cannot set socket send buffer size to: %d", sendbuff);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -321,7 +321,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 		}
 		recvbuff = test->recv_buf_size;
 		if (setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, (char *) &recvbuff, sizeof(recvbuff)) < 0){
-			asprintf(&log, "cannot set socket receive buffer size to: %d", recvbuff);
+			ASPRINTF(&log, "cannot set socket receive buffer size to: %d", recvbuff);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -329,7 +329,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			return -1;
 		}
 /*		if ( set_socket_non_blocking(sockfd) == -1){
-			asprintf(&log, "cannot set socket as non-blocking: %d", sockfd);
+			ASPRINTF(&log, "cannot set socket as non-blocking: %d", sockfd);
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
@@ -338,11 +338,11 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 		}
 */
 		if (( i = bind(sockfd, p->ai_addr, p->ai_addrlen)) < 0){
-			asprintf(&log, "failed to bind the socket to local address: %s on socket: %d. errcode = %d",
+			ASPRINTF(&log, "failed to bind the socket to local address: %s on socket: %d. errcode = %d",
 			ip_address_str = retrive_ip_address_str((struct sockaddr_storage *)p->ai_addr, ip_address_str, ip_address_max_size), sockfd, i );
 
 			if (i == -1)
-				asprintf(&log, "%s. errcode = %d", log, errno);
+				ASPRINTF(&log, "%s. errcode = %d", log, errno);
 			PRINT_DBG_FREE(log);
 			continue;
 		}
@@ -353,7 +353,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	freeaddrinfo(serv_info);
 	free(ip_address_str);
 	if (p == NULL){
-		asprintf(&log, "cannot bind the socket on address: %s", test->bind_address);
+		ASPRINTF(&log, "cannot bind the socket on address: %s", test->bind_address);
 		PRINT_ERR_FREE(log);
 		close(sockfd);
 		return -1;
@@ -361,7 +361,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 
 	server->listener = sockfd;
 	if (listen(server->listener, MAX_CONNECTIONS_PER_THREAD) < 0){
-		asprintf(&log, "failed to listen on address: %s: %d", test->bind_address, test->server_port);
+		ASPRINTF(&log, "failed to listen on address: %s: %d", test->bind_address, test->server_port);
 		PRINT_ERR_FREE(log);
 		close(server->listener);
 		return -1;
@@ -373,7 +373,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	if (server->listener > server->max_fd)
 		server->max_fd = server->listener;
 
-	asprintf(&log, "lagscope server is listening on %s:%d", test->bind_address, test->server_port);
+	ASPRINTF(&log, "lagscope server is listening on %s:%d", test->bind_address, test->server_port);
 	PRINT_DBG_FREE(log);
 
 	return server->listener;
@@ -443,7 +443,7 @@ int lagscope_server_select(struct lagscope_test_server *server)
 
 				/* then we got a new connection */
 /*				if (set_socket_non_blocking(newfd) == -1){
-					asprintf(&log, "cannot set the new socket as non-blocking: %d", newfd);
+					ASPRINTF(&log, "cannot set the new socket as non-blocking: %d", newfd);
 					PRINT_DBG_FREE(log);
 				}
 */
@@ -456,11 +456,11 @@ int lagscope_server_select(struct lagscope_test_server *server)
 				/* print out new connection info */
 				local_addr_size = sizeof(local_addr);
 				if (getsockname(newfd, (struct sockaddr *) &local_addr, &local_addr_size) != 0){
-					asprintf(&log, "failed to get local address information for the new socket: %d", newfd);
+					ASPRINTF(&log, "failed to get local address information for the new socket: %d", newfd);
 					PRINT_DBG_FREE(log);
 				}
 				else{
-					asprintf(&log, "New connection: %s:%d --> local:%d [socket %d]",
+					ASPRINTF(&log, "New connection: %s:%d --> local:%d [socket %d]",
 							ip_address_str = retrive_ip_address_str(&peer_addr, ip_address_str, ip_address_max_size),
 							ntohs( test->domain == AF_INET ?
 									((struct sockaddr_in *)&peer_addr)->sin_port
@@ -480,11 +480,11 @@ int lagscope_server_select(struct lagscope_test_server *server)
 				/* got error or connection closed by client */
 				if ((nbytes = n_read(current_fd, buffer, msg_actual_size)) <= 0) {
 					if (nbytes == 0){
-						asprintf(&log, "socket closed: %d", current_fd);
+						ASPRINTF(&log, "socket closed: %d", current_fd);
 						PRINT_DBG_FREE(log);
 					}
 					else{
-						asprintf(&log, "error: cannot read data from socket: %d", current_fd);
+						ASPRINTF(&log, "error: cannot read data from socket: %d", current_fd);
 						PRINT_INFO_FREE(log);
 						err_code = ERROR_NETWORK_READ;
 						/* need to continue test and check other socket, so don't end the test */
@@ -495,10 +495,10 @@ int lagscope_server_select(struct lagscope_test_server *server)
 				/* report ping request eceived */
 				else {
 					if ((nbytes = n_write(current_fd, buffer, msg_actual_size)) != msg_actual_size) {
-						asprintf(&log, "error: cannot write echo data to client from socket: %d", current_fd);
+						ASPRINTF(&log, "error: cannot write echo data to client from socket: %d", current_fd);
 						PRINT_ERR_FREE(log);
 					}
-					asprintf(&log, "Received from %s: bytes=%ld",
+					ASPRINTF(&log, "Received from %s: bytes=%ld",
 							ip_address_str = retrive_ip_address_str(&peer_addr, ip_address_str, ip_address_max_size),
 							nbytes);
 					PRINT_DBG_FREE(log);
@@ -520,12 +520,12 @@ long run_lagscope_receiver(struct lagscope_test_server *server)
 
 	server->listener = lagscope_server_listen(server);
 	if (server->listener < 0){
-		asprintf(&log, "listen error at port: %d", server->test->server_port);
+		ASPRINTF(&log, "listen error at port: %d", server->test->server_port);
 		PRINT_ERR_FREE(log);
 	}
 	else{
 		if ( lagscope_server_select(server) != NO_ERROR ){
-			asprintf(&log, "select error at port: %d", server->test->server_port);
+			ASPRINTF(&log, "select error at port: %d", server->test->server_port);
 			PRINT_ERR_FREE(log);
 		}
 	}

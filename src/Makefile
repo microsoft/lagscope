@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -g
+CFLAGS=-Wall -W -O2 -fno-strict-aliasing
 CLIBS=-pthread
 OUT=lagscope
 OBJS=lagscope.o tcpstream.o controller.o util.o  main.o

@@ -37,3 +37,9 @@
 		PRINT_LOG_FREE ("DBG ", y) \
 	} \
 }
+
+#define ASPRINTF(...) { \
+	int nc = asprintf(__VA_ARGS__); \
+	if (nc < 0) \
+		PRINT_ERR("error occurs in asprintf"); \
+}
