@@ -81,5 +81,33 @@ struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test)
 	memset(r, 0, sizeof(struct lagscope_test_runtime));
 	r->test = test;
 
+	/* calculate the lazy_prog_report_factor */
+	unsigned long total_pings = 1;
+	/*
+	 * For PING_ITERATION, we know the total number of pings will be executed;
+	 * For TIME_DURATION, we estimate the total number of pings:
+	 *   a) total test duration time, devided by
+	 *   b) interval between each pings, or 1 ms (0.001 sec) if the interval == 0.
+	 */
+	if (test->test_mode == PING_ITERATION) {
+		total_pings = test->iteration;
+	}
+	else {
+		if (test->interval !=0)
+			total_pings = test->duration / test->interval;
+		else
+			total_pings = test->duration / 0.001;
+	}
+	/*
+	 * We report the percentage of test progress.
+	 * So basically it is only needed to be updated in every 1%.
+	 * That means, in every lazy_prog_report_factor,
+	 * the progress percentage needs to be updated only once.
+	 */
+	if (total_pings > 100)
+		r->lazy_prog_report_factor = total_pings / 100;
+	else
+		r->lazy_prog_report_factor = 1;
+
 	return r;
 }
