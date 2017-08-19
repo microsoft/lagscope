@@ -35,5 +35,32 @@ void print_test_stats();
 
 double unit_atod(const char *s);
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen);
-double get_time_diff(struct timeval *t1, struct timeval *t2);
-void report_progress(struct lagscope_test_runtime *test_runtime);
+
+static inline double get_time_diff(struct timeval *t1, struct timeval *t2)
+{
+	return fabs( (t1->tv_sec + (t1->tv_usec / 1000000.0)) - (t2->tv_sec + (t2->tv_usec / 1000000.0)) );
+}
+
+static inline void report_progress(struct lagscope_test_runtime *test_runtime)
+{
+	/*
+	 * Only report progress once in every lazy_prog_report_factor of pings 
+	 * (try to increase ~1%, by estimation)
+	 */
+	if (test_runtime->ping_elapsed % test_runtime->lazy_prog_report_factor != 0)
+		return;
+
+	if(test_runtime->test->test_mode == PING_ITERATION) {
+		printf("%s: %lu%% completed.\r",
+		test_runtime->test->bind_address,
+		test_runtime->ping_elapsed * 100 / test_runtime->test->iteration);
+	}
+	else {
+		double time_elapsed = get_time_diff(&test_runtime->current_time, &test_runtime->start_time);
+		printf("%s: %.0f%% completed.\r",
+		test_runtime->test->bind_address,
+		time_elapsed * 100 / test_runtime->test->duration);
+	}
+	fflush(stdout);
+}
+
