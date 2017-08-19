@@ -70,3 +70,16 @@ struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test)
 	
 	return c;
 }
+
+struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test)
+{
+	struct lagscope_test_runtime *r;
+	r = (struct lagscope_test_runtime *) malloc(sizeof(struct lagscope_test_runtime));
+	if (!r)
+		return NULL;
+
+	memset(r, 0, sizeof(struct lagscope_test_runtime));
+	r->test = test;
+
+	return r;
+}

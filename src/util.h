@@ -36,3 +36,4 @@ void print_test_stats();
 double unit_atod(const char *s);
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen);
 double get_time_diff(struct timeval *t1, struct timeval *t2);
+void report_progress(struct lagscope_test_runtime *test_runtime);

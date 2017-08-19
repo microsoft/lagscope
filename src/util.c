@@ -43,7 +43,7 @@ void print_flags(struct lagscope_test *test)
 		}
 		else {
 			printf("%s:\t\t\t %s\n", "test mode", "PING ITERATION");
-			printf("%s:\t\t\t %d\n", "test iteration", test->iteration);
+			printf("%s:\t\t\t %lu\n", "test iteration", test->iteration);
 		}
 		printf("%s:\t\t %d\n", "test interval (sec)", test->interval);
 		if (test->hist) {
@@ -353,4 +353,21 @@ char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t m
 		break;
 	}
 	return ip_str;
+}
+
+void report_progress(struct lagscope_test_runtime *test_runtime)
+{
+	if(test_runtime->test->test_mode == PING_ITERATION) {
+		printf("%s: %lu%% completed.\r",
+			test_runtime->test->bind_address,
+			test_runtime->ping_elapsed * 100 / test_runtime->test->iteration);
+	}
+	else
+	{
+		double time_elapsed = get_time_diff(&test_runtime->current_time, &test_runtime->start_time);
+		printf("%s: %.0f%% completed.\r",
+			test_runtime->test->bind_address,
+			time_elapsed * 100 / test_runtime->test->duration);
+	}
+	fflush(stdout);
 }

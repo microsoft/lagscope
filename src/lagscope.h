@@ -34,7 +34,7 @@ struct lagscope_test
 	int     test_mode;           /* lagscope client will decide a test mode based on user input */
 	int     msg_size;            /* '-z' for message size */
 	int     duration;            /* '-t' for total duration in sec of test */
-	int     iteration;           /* '-n' for test iteration */
+	unsigned long iteration;     /* '-n' for test iteration */
 	int     interval;            /* '-i' for ping interval */
 
 	bool    hist;                /* '-H' for histogram report */
@@ -61,8 +61,16 @@ struct lagscope_test_client{
 	int     test_mode;           /* lagscope client will decide a test mode based on user input  */
 };
 
+struct lagscope_test_runtime{
+	struct lagscope_test *test;
+	struct timeval       start_time;
+	struct timeval       current_time;
+	unsigned long        ping_elapsed;
+};
+
 struct lagscope_test *new_lagscope_test();
 void default_lagscope_test(struct lagscope_test *test);
 
 struct lagscope_test_server *new_lagscope_server(struct lagscope_test *test);
 struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test);
+struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test);

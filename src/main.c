@@ -13,6 +13,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 {
 	char *log = 0;
 	bool verbose_log = false;
+	struct lagscope_test_runtime *test_runtime;
 	int sockfd = 0; //socket id
 	int sendbuff, recvbuff = 0;   //send buffer size
 	char *buffer; //send buffer
@@ -34,7 +35,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	int i = 0;
 
 	/* for ping statistics */
-	long n_pings = 0; //number of pings
+	unsigned long n_pings = 0; //number of pings
 	double max_latency = 0;
 	double min_latency = 60000; //60 seconds
 	double sum_latency = 0;
@@ -42,6 +43,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	int64_t hist_index = 0;
 
 	verbose_log = test->verbose;
+	test_runtime = new_test_runtime(test);
 
 	ip_address_max_size = (test->domain == AF_INET? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 	if ( (ip_address_str = (char *)malloc(ip_address_max_size)) == (char *)NULL){
@@ -155,6 +157,9 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	if (test->test_mode == TIME_DURATION)
 		run_test_timer(test->duration );
 
+	gettimeofday(&now, NULL);
+	test_runtime->start_time = now;
+
 	while (is_light_turned_on()){
 		gettimeofday(&now, NULL);
 		send_time = now;
@@ -184,6 +189,9 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		PRINT_DBG_FREE(log);
 
 		n_pings++;
+		test_runtime->current_time = recv_time;
+		test_runtime->ping_elapsed = n_pings;
+
 		/* calculate max. avg. min. */
 		sum_latency += latency;
 		if (max_latency < latency)
@@ -194,6 +202,9 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		if (test->test_mode == PING_ITERATION)
 			if (n_pings >= test->iteration)
 				break;
+
+		if (verbose_log == false)
+			report_progress(test_runtime);
 
 		/* fill the histogram array */
 		if (test->hist) {
@@ -209,7 +220,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			histogram[hist_index]++;
 		}
 
-		sleep(test->interval); //sleep for ping interval, for example, 1 second
+		if (test->interval !=0)
+			sleep(test->interval); //sleep for ping interval, for example, 1 second
 	}	
 	//sleep(60);
 finished:
