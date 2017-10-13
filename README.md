@@ -6,13 +6,13 @@ A Linux tool to measure the network transport layer latency.
 
 ## Features
 
-* Support network transport layer latency measurement.
+* Support network transport layer latency measurement (round-trip latency).
 
 * Support specifying ping message size, and ping interval.
 
 * Support two test modes: test-duration mode and ping-iteration mode.
 
-* Support cpu affinity.
+* Support CPU affinity.
 
 * Support running in background (daemon).
 
@@ -40,27 +40,53 @@ On NODE1 (the receiver), run:
 ```
 ./lagscope -r
 ```
-(Translation: Run lagscope as a receiver with default settings. See the output from "./lagscope -h" for more  details about the default settings.)
+(Translation: Run lagscope as a receiver with default settings. See the output from "./lagscope -h" for more details about the default settings.)
 
 And on NODE2 (the sender), run:
 ```
-./lagscope -s192.168.4.1
+./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
 ```
-(Translation: Run lagscope as a sender, with default settings. )
+(Translation: Run lagscope as a sender, with default test settings; report histogram value with customized factors.)
 
 
 Example sender-side output from a given run (which showcases 0.515ms latency in average):
 
 ```
-simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1
-lagscope 0.1.0
+simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
+lagscope 0.1.1
 ---------------------------------------------------------
 13:19:44 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
 13:36:24 INFO: TEST COMPLETED.
 13:36:24 INFO: Ping statistics for 192.168.4.1:
-13:36:24 INFO:  Number of successful Pings: 1000
-13:36:24 INFO:  Minimum = 0.456ms, Maximum = 0.578ms, Average = 0.515ms
-
+13:36:24 INFO:  Number of successful Pings: 1000000
+13:36:24 INFO:  Minimum = 30.994us, Maximum = 8699.894us, Average = 54.063us
+Interval(usec)   Frequency
+      0          0
+     10          0
+     11          0
+     12          0
+     ...
+     50          75086
+     51          116062
+     52          36401
+     53          27288
+     54          19781
+     55          16578
+     56          29390
+     57          8965
+     58          8980
+     59          8812
+     60          8418
+     ...	 
+    100          519
+    101          472
+    102          849
+    103          324
+    104          324
+    105          327
+    106          291
+    107          288
+    108          6107
 ```
 
 # Related topics
@@ -74,9 +100,9 @@ lagscope 0.1.0
 
 ## Terms of Use
 
-By downloading and running this project, you agree to the license terms of the third party application software, Microsoft products, and components to be installed. 
+By downloading and running this project, you agree to the license terms of the third-party application software, Microsoft products, and components to be installed. 
 
-The third party software and products are provided to you by third parties. You are responsible for reading and accepting the relevant license terms for all software that will be installed. Microsoft grants you no rights to third party software.
+The third-party software and products are provided to you by third parties. You are responsible for reading and accepting the relevant license terms for all software that will be installed. Microsoft grants you no rights to third party software.
 
 
 ## License
