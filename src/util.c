@@ -74,15 +74,15 @@ void print_usage()
 	printf("\t-B   <send buffer size>    [default: %d bytes]\n", DEFAULT_SEND_BUFFER_SIZE_BYTES);
 	printf("\t-z   <message size>        [default: %d bytes]\n", DEFAULT_MESSAGE_SIZE_BYTES);
 
-	printf("\t-t   [CLIENT ONLY] test duration       [default: %d second(s)]\n", DEFAULT_TEST_DURATION_SEC);
-	printf("\t-n   [CLIENT ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
-	printf("\t-i   [CLIENT ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
+	printf("\t-t   [SENDER ONLY] test duration       [default: %d second(s)]\n", DEFAULT_TEST_DURATION_SEC);
+	printf("\t-n   [SENDER ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
+	printf("\t-i   [SENDER ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
 	printf("\t     '-n' will be ignored if '-t' provided\n");
 
-	printf("\t-H   [CLIENT ONLY] print histogram of per-iteration latency values\n");
-	printf("\t-a   [CLIENT ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
-	printf("\t-l   [CLIENT ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
-	printf("\t-c   [CLIENT ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
+	printf("\t-H   [SENDER ONLY] print histogram of per-iteration latency values\n");
+	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
+	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
+	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
