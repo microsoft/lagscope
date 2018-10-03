@@ -7,17 +7,17 @@
 //include time.h when calling localtime()
 #define PRINT_LOG(x, y) { \
 	time_t rawtime; \
-	struct tm * timeinfo;\
-	char buffer [80];\
-	time ( &rawtime );\
-	timeinfo = localtime ( &rawtime );\
-	strftime ( buffer,80,"%H:%M:%S",timeinfo );\
-	printf ( "%s %s: %s\n", buffer, x, y);\
+	struct tm * timeinfo; \
+	char buffer [80]; \
+	time(&rawtime); \
+	timeinfo = localtime(&rawtime); \
+	strftime(buffer, 80, "%H:%M:%S", timeinfo); \
+	printf("%s %s: %s\n", buffer, x, y); \
 }
 
 #define PRINT_LOG_FREE(x, y) { \
 	PRINT_LOG(x, y) \
-	free(y);\
+	free(y); \
 }
 
 #define PRINT_INFO(y) { PRINT_LOG ("INFO", y) }
@@ -27,13 +27,13 @@
 #define PRINT_ERR_FREE(y) { PRINT_LOG_FREE ("ERR ", y) }
 
 #define PRINT_DBG(y) { \
-	if(verbose_log) { \
+	if (verbose_log) { \
 		PRINT_LOG ("DBG ", y) \
 	} \
 }
 
 #define PRINT_DBG_FREE(y) { \
-	if(verbose_log) { \
+	if (verbose_log) { \
 		PRINT_LOG_FREE ("DBG ", y) \
 	} \
 }

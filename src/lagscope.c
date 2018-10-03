@@ -54,7 +54,7 @@ struct lagscope_test_server *new_lagscope_server(struct lagscope_test *test)
 
 	memset(s, 0, sizeof(struct lagscope_test_server));
 	s->test = test;
-	
+
 	return s;
 }
 
@@ -67,7 +67,7 @@ struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test)
 
 	memset(c, 0, sizeof(struct lagscope_test_client));
 	c->test = test;
-	
+
 	return c;
 }
 
