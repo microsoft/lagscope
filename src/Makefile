@@ -19,9 +19,12 @@ main.o: main.c
 
 .PHONY: clean
 clean:
-	rm -rf /usr/bin/$(OUT)
 	rm -rf *.o $(OUT)
 
 .PHONY: install
 install:
 	cp $(OUT) /usr/bin
+
+.PHONY: uninstall
+uninstall:
+	rm -rf /usr/bin/$(OUT)
