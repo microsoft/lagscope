@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall -W -O2 -fno-strict-aliasing
 CLIBS=-pthread
 OUT=lagscope
-OBJS=lagscope.o tcpstream.o controller.o util.o  main.o
+OBJS=lagscope.o tcpstream.o controller.o util.o main.o
 
 $(OUT): lagscope.o tcpstream.o controller.o util.o main.o
 	$(CC) $(CFLAGS) $(CLIBS) -o $(OUT) $(OBJS)
@@ -25,4 +25,3 @@ clean:
 .PHONY: install
 install:
 	cp $(OUT) /usr/bin
-
