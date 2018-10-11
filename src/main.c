@@ -59,6 +59,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	ASPRINTF(&port_str, "%d", test->server_port);
 	if (getaddrinfo(test->bind_address, port_str, &hints, &serv_info) != 0) {
 		PRINT_ERR("cannot get address info for receiver");
+		free(ip_address_str);
 		return 0;
 	}
 	free(port_str);
