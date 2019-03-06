@@ -2,9 +2,9 @@ CC=gcc
 CFLAGS=-Wall -W -O2 -fno-strict-aliasing
 CLIBS=-pthread
 OUT=lagscope
-OBJS=lagscope.o tcpstream.o controller.o util.o  main.o
+OBJS=lagscope.o tcpstream.o controller.o util.o latencies_stats.o main.o
 
-$(OUT): lagscope.o tcpstream.o controller.o util.o main.o
+$(OUT): lagscope.o tcpstream.o controller.o util.o latencies_stats.o main.o
 	$(CC) $(CFLAGS) $(CLIBS) -o $(OUT) $(OBJS)
 lagscope.o: lagscope.c
 	$(CC) $(CFLAGS) -c lagscope.c -o lagscope.o
@@ -16,6 +16,9 @@ util.o: util.c
 	$(CC) $(CFLAGS) -c util.c -o util.o
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o main.o
+latencies_stats.o: latencies_stats.c
+	$(CC) $(CFLAGS) -c latencies_stats.c -o latencies_stats.o
+
 
 .PHONY: clean
 clean:

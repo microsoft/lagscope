@@ -33,6 +33,11 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv);
 void print_iteration_histogram();
 void print_test_stats();
 
+int show_percentile(unsigned long, unsigned long);
+int show_histogram(int, int, int, unsigned long);
+void push(unsigned long);
+void latencies_stats_cleanup(void);
+
 double unit_atod(const char *s);
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen);
 
@@ -63,4 +68,3 @@ static inline void report_progress(struct lagscope_test_runtime *test_runtime)
 	}
 	fflush(stdout);
 }
-

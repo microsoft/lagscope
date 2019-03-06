@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 #define TOOL_NAME "lagscope"
-#define TOOL_VERSION "0.1.1"
+#define TOOL_VERSION "0.1.2"
 #define AUTHOR_NAME "Shihua (Simon) Xiao, sixiao@microsoft.com"
 
 #define TCP 				SOCK_STREAM
