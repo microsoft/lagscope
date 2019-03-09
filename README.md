@@ -92,6 +92,44 @@ Interval(usec)   Frequency
     108          6107
 ```
 
+### Example run Percentile
+
+To measure the network TCP latency between two multi-core serves running Ubuntu 1604, NODE1 (192.168.4.1) and NODE2 (192.168.4.2).
+
+On NODE1 (the receiver), run:
+```
+./lagscope -r
+```
+(Translation: Run lagscope as a receiver with default settings. See the output from `./lagscope -h` for more details about the default settings.)
+
+And on NODE2 (the sender), run:
+```
+./lagscope -s192.168.4.1 -G
+```
+(Translation: Run lagscope as a sender. Prints these percentiles of the latencies: 50%, 75%, 90%, 99%, 99.9%, 99.99%, 99.999%.)
+
+
+Example sender-side output from a given run:
+
+```
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -G
+lagscope 0.1.2
+---------------------------------------------------------
+17:49:03 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
+17:50:37 INFO: TEST COMPLETED.
+17:50:37 INFO: Ping statistics for 192.168.4.1:
+17:50:37 INFO:  Number of successful Pings: 1000000
+17:50:37 INFO:  Minimum = 72.002us, Maximum = 4552.126us, Average = 92.055us
+
+Percentile       Latency(us)
+     50%         80
+     75%         102
+     90%         113
+   99.9%         410
+  99.99%         2566
+ 99.999%         3921
+```
+
 ## Related topics
 
 1. [NTTTCP-for-Linux](https://github.com/Microsoft/ntttcp-for-linux)

@@ -39,8 +39,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	double max_latency = 0;
 	double min_latency = 60000; //60 seconds
 	double sum_latency = 0;
-	int64_t histogram[HIST_MAX_INTERVAL_COUNT] = {0};
-	int64_t hist_index = 0;
+
+	int latencies_stats_err_check = 0;
 
 	verbose_log = test->verbose;
 	test_runtime = new_test_runtime(test);
@@ -183,6 +183,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		recv_time = now;
 		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
+		push(latency);		// Push latency onto linked list
+
 		ASPRINTF(&log, "Reply from %s: bytes=%d time=%.3fus",
 				ip_address_str,
 				n,
@@ -207,20 +209,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		if (verbose_log == false)
 			report_progress(test_runtime);
 
-		/* fill the histogram array */
-		if (test->hist) {
-			if (latency < test->hist_start) {
-				hist_index = 0;
-			}
-			else {
-				hist_index = ((latency - test->hist_start) / test->hist_len + 1);
-				if (hist_index > test->hist_count) {
-					hist_index = test->hist_count + 1;
-				}
-			}
-			histogram[hist_index]++;
-		}
-
 		if (test->interval !=0)
 			sleep(test->interval); //sleep for ping interval, for example, 1 second
 	}
@@ -240,21 +228,40 @@ finished:
 			sum_latency/n_pings);
 		PRINT_INFO_FREE(log);
 	}
-	if (test->hist) {
-		printf("\nInterval(usec)\t Frequency\n");
-		if (test->hist_start > 0) {
-			printf("%7d \t %" PRIu64 "\n", 0, histogram[0]);
+
+	/* function call to show percentiles */
+	if(test->perc)
+	{
+		latencies_stats_err_check = show_percentile(max_latency, n_pings);
+		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC)
+		{
+			PRINT_ERR("Memory allocation failed, aborting...");
 		}
-		for (i = 1; i < (test->hist_count + 2); i++) {
-			printf("%7d \t %" PRIu64 "\n", test->hist_start+((i-1)*test->hist_len), histogram[i]);
+		else if(latencies_stats_err_check == ERROR_GENERAL)
+		{
+			PRINT_ERR("Interanl Error, aborting...");
+		}
+	}
+
+	/* function call to show histogram */
+	if(test->hist)
+	{
+		latencies_stats_err_check = show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
+		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC)
+		{
+			PRINT_ERR("Memory allocation failed, aborting...");
+		}
+		else if(latencies_stats_err_check == ERROR_GENERAL)
+		{
+			PRINT_ERR("Interanl Error, aborting...");
 		}
 	}
 
 	/* free resource */
 	free(ip_address_str);
 	free(buffer);
+	latencies_stats_cleanup();
 	close(sockfd);
-
 	return n_pings;
 }
 

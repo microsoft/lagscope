@@ -42,6 +42,8 @@ void default_lagscope_test(struct lagscope_test *test)
 	test->hist_len         = HIST_DEFAULT_INTERVAL_LEN;	 //100
 	test->hist_count       = HIST_DEFAULT_INTERVAL_COUNT;	 //10
 
+	test->perc             = false;
+
 	test->verbose          = false;
 }
 

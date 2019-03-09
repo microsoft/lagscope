@@ -42,6 +42,8 @@ struct lagscope_test
 	int     hist_start;          /* '-a' for histogram 1st interval start value */
 	int     hist_len;            /* '-l' for length of histogram intervals */
 	int     hist_count;          /* '-c' for count of histogram intervals */
+
+	bool	perc;                  /* '-G' for long tail */
 	/* end of client-only parameters */
 
 	bool    verbose;             /* '-V' for verbose logging */
