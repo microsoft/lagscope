@@ -56,7 +56,7 @@ struct lagscope_test_server *new_lagscope_server(struct lagscope_test *test)
 
 	memset(s, 0, sizeof(struct lagscope_test_server));
 	s->test = test;
-	
+
 	return s;
 }
 
@@ -69,7 +69,7 @@ struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test)
 
 	memset(c, 0, sizeof(struct lagscope_test_client));
 	c->test = test;
-	
+
 	return c;
 }
 
@@ -88,7 +88,7 @@ struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test)
 	/*
 	 * For PING_ITERATION, we know the total number of pings will be executed;
 	 * For TIME_DURATION, we estimate the total number of pings:
-	 *   a) total test duration time, devided by
+	 *   a) total test duration time, divided by
 	 *   b) interval between each pings, or 1 ms (0.001 sec) if the interval == 0.
 	 */
 	if (test->test_mode == PING_ITERATION) {

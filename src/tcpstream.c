@@ -14,9 +14,9 @@ int n_read(int fd, char *buffer, size_t total)
 	register ssize_t rtn;
 	register size_t left = total;
 
-	while (left > 0){
+	while (left > 0) {
 		rtn = read(fd, buffer, left);
-		if (rtn < 0){
+		if (rtn < 0) {
 			if (errno == EINTR || errno == EAGAIN)
 				break;
 			else
@@ -37,9 +37,9 @@ int n_write(int fd, const char *buffer, size_t total)
 	register ssize_t rtn;
 	register size_t left = total;
 
-	while (left > 0){
+	while (left > 0) {
 		rtn = write(fd, buffer, left);
-		if (rtn < 0){
+		if (rtn < 0) {
 			if (errno == EINTR || errno == EAGAIN)
 				return total - left;
 			else

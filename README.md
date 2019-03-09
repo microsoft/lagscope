@@ -19,14 +19,17 @@ A Linux tool to measure the network transport layer latency.
 
 ## Getting Started
 
+### Building lagscope
 
-### Building lagscope ###
-
-	make; make install
+```
+make; make install
+```
 
 ### Usage
-	
-	lagscope -h
+
+```
+lagscope -h
+```
 
 ### Known issues
 
@@ -34,13 +37,13 @@ A Linux tool to measure the network transport layer latency.
 
 ### Example run
 
-To measure the network TCP latency between two multi-core serves running Ubuntu 1604, NODE1 (192.168.4.1) and NODE2 (192.168.4.2). 
+To measure the network TCP latency between two multi-core serves running Ubuntu 1604, NODE1 (192.168.4.1) and NODE2 (192.168.4.2).
 
 On NODE1 (the receiver), run:
 ```
 ./lagscope -r
 ```
-(Translation: Run lagscope as a receiver with default settings. See the output from "./lagscope -h" for more details about the default settings.)
+(Translation: Run lagscope as a receiver with default settings. See the output from `./lagscope -h` for more details about the default settings.)
 
 And on NODE2 (the sender), run:
 ```
@@ -53,7 +56,7 @@ Example sender-side output from a given run (which showcases 0.515ms latency in 
 
 ```
 simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
-lagscope 0.1.2
+lagscope 0.1.1
 ---------------------------------------------------------
 13:19:44 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
 13:36:24 INFO: TEST COMPLETED.
@@ -97,7 +100,7 @@ On NODE1 (the receiver), run:
 ```
 ./lagscope -r
 ```
-(Translation: Run lagscope as a receiver with default settings. See the output from "./lagscope -h" for more details about the default settings.)
+(Translation: Run lagscope as a receiver with default settings. See the output from `./lagscope -h` for more details about the default settings.)
 
 And on NODE2 (the sender), run:
 ```
@@ -109,7 +112,7 @@ And on NODE2 (the sender), run:
 Example sender-side output from a given run:
 
 ```
-simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -G
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -G
 lagscope 0.1.2
 ---------------------------------------------------------
 17:49:03 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
@@ -127,7 +130,7 @@ Percentile       Latency(us)
  99.999%         3921
 ```
 
-# Related topics
+## Related topics
 
 1. [NTTTCP-for-Linux](https://github.com/Microsoft/ntttcp-for-linux)
 
@@ -138,7 +141,7 @@ Percentile       Latency(us)
 
 ## Terms of Use
 
-By downloading and running this project, you agree to the license terms of the third-party application software, Microsoft products, and components to be installed. 
+By downloading and running this project, you agree to the license terms of the third-party application software, Microsoft products, and components to be installed.
 
 The third-party software and products are provided to you by third parties. You are responsible for reading and accepting the relevant license terms for all software that will be installed. Microsoft grants you no rights to third party software.
 

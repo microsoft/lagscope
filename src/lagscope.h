@@ -23,7 +23,7 @@ struct lagscope_test
 	bool    client_role;        /* '-r' for server */
 	char    *bind_address;      /* server address, following by '-s' or '-r' */
 	bool    daemon;             /* '-D' for daemon mode */
-	int     cpu_affinity;       /* '-f' for CPU affinity */	
+	int     cpu_affinity;       /* '-f' for CPU affinity */
 
 	int     domain;              /* default for AF_INET, or '-6' for AF_INET6 */
 	int     protocol;            /* default for SOCK_STREAM for TCP, or '-u' for SOCK_DGRAM for UDP (does not support UDP for now) */

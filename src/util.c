@@ -16,9 +16,9 @@ void print_flags(struct lagscope_test *test)
 		printf("%s\n", "*** run as daemon");
 
 	if (test->cpu_affinity == -1)
-		printf("%s:\t\t\t %s\n", "cpu affinity", "*" );
+		printf("%s:\t\t\t %s\n", "cpu affinity", "*");
 	else
-		printf("%s:\t\t\t %d\n", "cpu affinity", test->cpu_affinity );
+		printf("%s:\t\t\t %d\n", "cpu affinity", test->cpu_affinity);
 
 	printf("%s:\t\t\t %s\n", "server address", test->bind_address);
 
@@ -36,7 +36,7 @@ void print_flags(struct lagscope_test *test)
 	printf("%s:\t %.2f\n", "socket send buffer (bytes)", test->send_buf_size);
 	printf("%s:\t\t %d\n", "message size (bytes)", test->msg_size);
 
-	if (test->client_role){
+	if (test->client_role) {
 		if (test->test_mode == TIME_DURATION) {
 			printf("%s:\t\t\t %s\n", "test mode", "TIME DURATION");
 			printf("%s:\t\t %d\n", "test duration (sec)", test->duration);
@@ -74,15 +74,15 @@ void print_usage()
 	printf("\t-B   <send buffer size>    [default: %d bytes]\n", DEFAULT_SEND_BUFFER_SIZE_BYTES);
 	printf("\t-z   <message size>        [default: %d bytes]\n", DEFAULT_MESSAGE_SIZE_BYTES);
 
-	printf("\t-t   [CLIENT ONLY] test duration       [default: %d second(s)]\n", DEFAULT_TEST_DURATION_SEC);
-	printf("\t-n   [CLIENT ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
-	printf("\t-i   [CLIENT ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
+	printf("\t-t   [SENDER ONLY] test duration       [default: %d second(s)]\n", DEFAULT_TEST_DURATION_SEC);
+	printf("\t-n   [SENDER ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
+	printf("\t-i   [SENDER ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
 	printf("\t     '-n' will be ignored if '-t' provided\n");
 
-	printf("\t-H   [CLIENT ONLY] print histogram of per-iteration latency values\n");
-	printf("\t-a   [CLIENT ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
-	printf("\t-l   [CLIENT ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
-	printf("\t-c   [CLIENT ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
+	printf("\t-H   [SENDER ONLY] print histogram of per-iteration latency values\n");
+	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
+	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
+	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 
 	printf("\t-G   [CLIENT ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
 
@@ -114,12 +114,12 @@ int verify_args(struct lagscope_test *test)
 		return ERROR_ARGS;
 	}
 
-	if (test->domain == AF_INET6 && !strstr( test->bind_address, ":") ) {
+	if (test->domain == AF_INET6 && !strstr(test->bind_address, ":")) {
 		PRINT_ERR("invalid ipv6 address provided");
 		return ERROR_ARGS;
 	}
 
-	if (test->domain == AF_INET && !strstr( test->bind_address, ".") ) {
+	if (test->domain == AF_INET && !strstr(test->bind_address, ".")) {
 		PRINT_ERR("invalid ipv4 address provided");
 		return ERROR_ARGS;
 	}
@@ -165,17 +165,17 @@ int verify_args(struct lagscope_test *test)
 		test->msg_size = DEFAULT_MESSAGE_SIZE_BYTES;
 	}
 
-	if (test->test_mode == TIME_DURATION && test->duration < 1 ) {
+	if (test->test_mode == TIME_DURATION && test->duration < 1) {
 		PRINT_INFO("invalid test duration; use default value.");
 		test->duration  = DEFAULT_TEST_DURATION_SEC;
 	}
 
-	if (test->test_mode == PING_ITERATION && test->iteration < 1 ) {
+	if (test->test_mode == PING_ITERATION && test->iteration < 1) {
 		PRINT_INFO("invalid ping iteration; use default value.");
 		test->iteration = DEFAULT_TEST_ITERATION;
 	}
 
-	if (test->domain == AF_INET6 && strcmp( test->bind_address, "0.0.0.0")== 0 )
+	if (test->domain == AF_INET6 && strcmp(test->bind_address, "0.0.0.0") == 0)
 		test->bind_address = "::";
 
 	return NO_ERROR;
@@ -321,7 +321,7 @@ double unit_atod(const char *s)
 	char suffix = '\0';
 
 	sscanf(s, "%lf%c", &n, &suffix);
-	switch (suffix){
+	switch (suffix) {
 	case 'g': case 'G':
 		n *= GIBI;
 		break;
