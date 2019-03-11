@@ -104,7 +104,7 @@ On NODE1 (the receiver), run:
 
 And on NODE2 (the sender), run:
 ```
-./lagscope -s192.168.4.1 -G
+./lagscope -s192.168.4.1 -P
 ```
 (Translation: Run lagscope as a sender. Prints these percentiles of the latencies: 50%, 75%, 90%, 99%, 99.9%, 99.99%, 99.999%.)
 
@@ -112,7 +112,7 @@ And on NODE2 (the sender), run:
 Example sender-side output from a given run:
 
 ```
-paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -G
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -P
 lagscope 0.1.2
 ---------------------------------------------------------
 17:49:03 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
