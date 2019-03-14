@@ -44,6 +44,9 @@ struct lagscope_test
 	int     hist_count;          /* '-c' for count of histogram intervals */
 
 	bool	perc;                /* '-P' for getting percentiles */
+
+	bool	raw_dump;	     /* '-R' for dumping latencies into a file */
+	char	*csv_file_name;	     /* name of the file being dumped into, follows '-R' */
 	/* end of client-only parameters */
 
 	bool    verbose;             /* '-V' for verbose logging */

@@ -1,5 +1,7 @@
 #include "util.h"
 
+#define CSV_FILE_HEADER "Index, Latency(us)\n"
+
 /* datastructure to hold latencies. */
 typedef struct node
 {
@@ -164,6 +166,30 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
     }
 
     return NO_ERROR;
+}
+
+void create_latencies_csv(const char *csv_filename)
+{
+    node_t * temp = head;
+    unsigned int latency_idx = 0;
+    FILE *fp = NULL;
+
+    fp = fopen(csv_filename, "w+");
+    if(fp == NULL)
+    {
+        PRINT_ERR("could not create csv file");
+        return;
+    }
+
+    fprintf(fp, CSV_FILE_HEADER);
+    while(temp != NULL)
+    {
+        fprintf(fp, "%d, %lu\n", latency_idx, temp->lat);
+        latency_idx++;
+        temp = temp->next;
+    }
+
+    fclose(fp);
 }
 
 void push(unsigned long lat)

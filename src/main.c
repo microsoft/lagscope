@@ -229,6 +229,14 @@ finished:
 		PRINT_INFO_FREE(log);
 	}
 
+	/* function call to dump latencies into a csv file */
+	if(test->raw_dump)
+	{
+		ASPRINTF(&log, "Dumping all latencies into %s", test->csv_file_name);
+		PRINT_INFO_FREE(log);
+		create_latencies_csv(test->csv_file_name);
+	}
+
 	/* function call to show percentiles */
 	if(test->perc)
 	{
