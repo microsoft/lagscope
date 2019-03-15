@@ -44,6 +44,8 @@ struct lagscope_test
 	int     hist_count;          /* '-c' for count of histogram intervals */
 
 	bool	perc;                /* '-P' for getting percentiles */
+	bool	freq_table_dump;     /* if there's an argument after -P */
+	char	*json_file_name;     /* name of the file frequency table will be dumped into, follows '-P' */
 
 	bool	raw_dump;	     /* '-R' for dumping latencies into a file */
 	char	*csv_file_name;	     /* name of the file being dumped into, follows '-R' */

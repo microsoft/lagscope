@@ -43,6 +43,7 @@ void default_lagscope_test(struct lagscope_test *test)
 	test->hist_count       = HIST_DEFAULT_INTERVAL_COUNT;	 //10
 
 	test->perc             = false;
+	test->freq_table_dump  = false;
 
 	test->raw_dump	       = false;
 	test->csv_file_name    = DEFAULT_CSV_FILENAME;

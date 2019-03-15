@@ -249,6 +249,13 @@ finished:
 		{
 			PRINT_ERR("Interanl Error, aborting...");
 		}
+
+		if(test->freq_table_dump)
+		{
+			ASPRINTF(&log, "Creating a JSON file of the latency frequency table in %s", test->json_file_name);
+			PRINT_INFO_FREE(log);
+			create_freq_table_json((unsigned long) max_latency, test->json_file_name);
+		}
 	}
 
 	/* function call to show histogram */
