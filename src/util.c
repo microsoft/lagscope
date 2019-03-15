@@ -314,12 +314,6 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 				test->csv_file_name = optarg;
 			break;
 
-		case 'R':
-			test->raw_dump = true;
-			if(optarg)
-				test->csv_file_name = optarg;
-			break;
-
 		case 'h':
 		default:
 			print_usage();
