@@ -84,7 +84,7 @@ void print_usage()
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 
-	printf("\t-G   [CLIENT ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
+	printf("\t-G   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
