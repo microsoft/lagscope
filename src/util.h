@@ -36,6 +36,7 @@ void print_test_stats();
 int show_percentile(unsigned long, unsigned long);
 int show_histogram(int, int, int, unsigned long);
 void create_latencies_csv(const char *);
+void create_freq_table_json(unsigned long, const char *);
 void push(unsigned long);
 void latencies_stats_cleanup(void);
 

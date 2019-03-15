@@ -192,6 +192,45 @@ void create_latencies_csv(const char *csv_filename)
     fclose(fp);
 }
 
+void create_freq_table_json(unsigned long max_latency, const char *file_name)
+{
+    unsigned int latency = 0;
+
+    FILE *fp = fopen(file_name, "w+");
+
+    if(fp == NULL)
+    {
+        PRINT_ERR("Error opening file to write json file");
+        return;
+    }
+
+    /* Print frequencies between 0 and starting interval */
+    fprintf(fp, "{\n");
+    fprintf(fp, "\t\"latencies\":[\n");
+
+    for(latency = 0; latency <= max_latency; latency++)
+    {
+        if(freq_table[latency] == 0)
+            continue;
+
+        fprintf(fp, "\t\t{\n");
+        fprintf(fp,"\t\t\t\"latency\": %d,\n", latency);
+        fprintf(fp,"\t\t\t\"frequency\": %lu\n", freq_table[latency]);
+        if(latency == max_latency)
+        {
+            fprintf(fp, "\t\t}\n");
+        }
+        else
+        {
+            fprintf(fp, "\t\t},\n");
+        }
+    }
+
+    fprintf(fp, "\t]\n");
+    fprintf(fp, "}\n");
+    fclose(fp);
+}
+
 void push(unsigned long lat)
 {
     node_t *tmp = new_node(lat);

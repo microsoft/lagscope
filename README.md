@@ -45,7 +45,9 @@ On NODE1 (the receiver), run:
 ```
 (Translation: Run lagscope as a receiver with default settings. See the output from `./lagscope -h` for more details about the default settings.)
 
-And on NODE2 (the sender), run:
+### Example run Histogram
+
+On NODE2 (the sender), run:
 ```
 ./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
 ```
@@ -94,19 +96,17 @@ Interval(usec)   Frequency
 
 ### Example run Percentile
 
-To measure the network TCP latency between two multi-core serves running Ubuntu 1604, NODE1 (192.168.4.1) and NODE2 (192.168.4.2).
-
-On NODE1 (the receiver), run:
-```
-./lagscope -r
-```
-(Translation: Run lagscope as a receiver with default settings. See the output from `./lagscope -h` for more details about the default settings.)
-
-And on NODE2 (the sender), run:
+On NODE2 (the sender), run:
 ```
 ./lagscope -s192.168.4.1 -P
 ```
 (Translation: Run lagscope as a sender. Prints these percentiles of the latencies: 50%, 75%, 90%, 99%, 99.9%, 99.99%, 99.999%.)
+
+Option for dumping a latency frequency table into a JSON file, run:
+```
+./lagscope -s192.168.4.1 -Platencies_table.json
+```
+(Translation: Run lagscope as a sender. Prints percentiles and dumps a latency frequency table into a JSON file)
 
 
 Example sender-side output from a given run:
@@ -128,6 +128,48 @@ Percentile       Latency(us)
    99.9%         410
   99.99%         2566
  99.999%         3921
+
+
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -Platencies_table.json
+lagscope 0.1.2
+---------------------------------------------------------
+17:49:03 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
+17:50:37 INFO: TEST COMPLETED.
+17:50:37 INFO: Ping statistics for 192.168.4.1:
+17:50:37 INFO:  Number of successful Pings: 1000000
+17:50:37 INFO:  Minimum = 72.002us, Maximum = 4552.126us, Average = 92.055us
+
+Percentile       Latency(us)
+     50%         80
+     75%         102
+     90%         113
+   99.9%         410
+  99.99%         2566
+ 99.999%         3921
+17:50:38 INFO: Creating a JSON file of the latency frequency table in latencies_table.json
+```
+
+### Example run to dump latencies into a csv file
+
+On NODE2 (the sender), run:
+```
+./lagscope -s192.168.4.1 -Rlatencies_log.csv
+```
+(Translation: Run lagscope as a sender and dumps latencies into a csv file)
+
+
+Example sender-side output from a given run:
+
+```
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -Rlatencies_log.csv
+lagscope 0.1.2
+---------------------------------------------------------
+19:38:31 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
+19:38:32 INFO: TEST COMPLETED.
+19:38:32 INFO: Ping statistics for 192.168.4.1:
+19:38:32 INFO:  Number of successful Pings: 1000000
+19:38:32 INFO:  Minimum = 96.083us, Maximum = 2828.121us, Average = 147.913us
+19:38:32 INFO: Dumping all latencies into latencies_log.csv
 ```
 
 ### Example run to dump latencies into a csv file

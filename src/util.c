@@ -85,8 +85,8 @@ void print_usage()
 	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
-
 	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
+  printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
@@ -100,6 +100,7 @@ void print_usage()
 	printf("\t1) ./lagscope -s192.168.1.1\n");
 	printf("\t2) ./lagscope -s192.168.1.1 -t 600 -i 1 -V\n");
 	printf("\t3) ./lagscope -sfd00::1:1 -n 1000 -6 -i 2 -V\n");
+	printf("\t1) ./lagscope -s192.168.1.1 -Pfreq_table.json\n");
 }
 
 void print_version()
@@ -210,7 +211,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 		{"hist-start", required_argument, NULL, 'a'},
 		{"hist-len", required_argument, NULL, 'l'},
 		{"hist-count", required_argument, NULL, 'c'},
-		{"perc", no_argument, NULL, 'P'},
+		{"perc", optional_argument, NULL, 'P'},
 		{"raw_dump", optional_argument, NULL, 'R'},
 		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -219,7 +220,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::PHa:l:c:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh", longopts, NULL)) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -300,6 +301,17 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'P':
 			test->perc = true;
+			if(optarg)
+			{
+				test->freq_table_dump = true;
+				test->json_file_name = optarg;
+			}
+			break;
+
+		case 'R':
+			test->raw_dump = true;
+			if(optarg)
+				test->csv_file_name = optarg;
 			break;
 
 		case 'R':
