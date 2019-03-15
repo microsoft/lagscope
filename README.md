@@ -35,7 +35,7 @@ lagscope -h
 
 * UDP is not supported.
 
-### Example run
+### Example run Histogram
 
 To measure the network TCP latency between two multi-core serves running Ubuntu 1604, NODE1 (192.168.4.1) and NODE2 (192.168.4.2).
 
@@ -128,6 +128,29 @@ Percentile       Latency(us)
    99.9%         410
   99.99%         2566
  99.999%         3921
+```
+
+### Example run to dump latencies into a csv file
+
+On NODE2 (the sender), run:
+```
+./lagscope -s192.168.4.1 -Rlatencies_log.csv
+```
+(Translation: Run lagscope as a sender and dumps latencies into a csv file)
+
+
+Example sender-side output from a given run:
+
+```
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -Rlatencies_log.csv
+lagscope 0.1.2
+---------------------------------------------------------
+19:38:31 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
+19:38:32 INFO: TEST COMPLETED.
+19:38:32 INFO: Ping statistics for 192.168.4.1:
+19:38:32 INFO:  Number of successful Pings: 1000000
+19:38:32 INFO:  Minimum = 96.083us, Maximum = 2828.121us, Average = 147.913us
+19:38:32 INFO: Dumping all latencies into latencies_log.csv
 ```
 
 ## Related topics

@@ -61,7 +61,7 @@ void print_flags(struct lagscope_test *test)
 void print_usage()
 {
 	printf("Author: %s\n", AUTHOR_NAME);
-	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-P|-H|-a|-l|-c|-V|-h]\n\n");
+	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-R|-P|-H|-a|-l|-c|-V|-h]\n\n");
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
 	printf("\t-D   Run as daemon\n");
@@ -78,6 +78,8 @@ void print_usage()
 	printf("\t-n   [SENDER ONLY] ping iteration      [default: %d]\n", DEFAULT_TEST_ITERATION);
 	printf("\t-i   [SENDER ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
 	printf("\t     '-n' will be ignored if '-t' provided\n");
+
+	printf("\t-R   [SENDER ONLY] dumps latencies into csv file\n");
 
 	printf("\t-H   [SENDER ONLY] print histogram of per-iteration latency values\n");
 	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
@@ -145,6 +147,12 @@ int verify_args(struct lagscope_test *test)
 		}
 	}
 
+	if (test->server_role) {
+		if (test->raw_dump) {
+			PRINT_ERR("dumping latencies into a file not supported on receiver side; ignored");
+		}
+	}
+
 	if (test->client_role) {
 		if (test->hist_start < 0) {
 			PRINT_ERR("histogram interval start value provided is invalid; use default value.");
@@ -203,6 +211,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 		{"hist-len", required_argument, NULL, 'l'},
 		{"hist-count", required_argument, NULL, 'c'},
 		{"perc", no_argument, NULL, 'P'},
+		{"raw_dump", optional_argument, NULL, 'R'},
 		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -210,7 +219,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:PHa:l:c:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::PHa:l:c:Vh", longopts, NULL)) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -291,6 +300,12 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'P':
 			test->perc = true;
+			break;
+
+		case 'R':
+			test->raw_dump = true;
+			if(optarg)
+				test->csv_file_name = optarg;
 			break;
 
 		case 'h':
