@@ -230,44 +230,35 @@ finished:
 	}
 
 	/* function call to dump latencies into a csv file */
-	if(test->raw_dump)
-	{
-		ASPRINTF(&log, "Dumping all latencies into %s", test->csv_file_name);
+	if(test->raw_dump) {
+		ASPRINTF(&log, "Dumping all latencies into csv file: %s", test->csv_file_name);
 		PRINT_INFO_FREE(log);
 		create_latencies_csv(test->csv_file_name);
 	}
 
 	/* function call to show percentiles */
-	if(test->perc)
-	{
-		latencies_stats_err_check = show_percentile(max_latency, n_pings);
-		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC)
-		{
-			PRINT_ERR("Memory allocation failed, aborting...");
-		}
-		else if(latencies_stats_err_check == ERROR_GENERAL)
-		{
-			PRINT_ERR("Interanl Error, aborting...");
-		}
-
-		if(test->freq_table_dump)
-		{
-			ASPRINTF(&log, "Creating a JSON file of the latency frequency table in %s", test->json_file_name);
+	if(test->perc) {
+		if(test->freq_table_dump) {
+			ASPRINTF(&log, "Dumping latency frequency table into json file: %s", test->json_file_name);
 			PRINT_INFO_FREE(log);
 			create_freq_table_json((unsigned long) max_latency, test->json_file_name);
+		}
+		latencies_stats_err_check = show_percentile(max_latency, n_pings);
+		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
+			PRINT_ERR("Memory allocation failed, aborting...");
+		}
+		else if(latencies_stats_err_check == ERROR_GENERAL) {
+			PRINT_ERR("Interanl Error, aborting...");
 		}
 	}
 
 	/* function call to show histogram */
-	if(test->hist)
-	{
+	if(test->hist) {
 		latencies_stats_err_check = show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
-		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC)
-		{
+		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
 			PRINT_ERR("Memory allocation failed, aborting...");
 		}
-		else if(latencies_stats_err_check == ERROR_GENERAL)
-		{
+		else if(latencies_stats_err_check == ERROR_GENERAL) {
 			PRINT_ERR("Interanl Error, aborting...");
 		}
 	}

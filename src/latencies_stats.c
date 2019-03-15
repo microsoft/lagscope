@@ -31,15 +31,11 @@ static int get_percentile_latency(double percentile, unsigned long arr_size, uns
     unsigned int latency = 0;
     unsigned long location_of_ping = 0;
     unsigned long ping_counter = 0;
-    if(percentile == 100)
-    {
+    if(percentile == 100) {
         latency = arr_size - 1;
-    }
-    else
-    {
+    } else {
         location_of_ping = (unsigned long) (((percentile * (n_pings + 1)) / 100) - 1);
-        while(ping_counter <= location_of_ping)
-        {
+        while(ping_counter <= location_of_ping) {
             ping_counter += freq_table[latency];
             latency++;
         }
@@ -66,8 +62,7 @@ static int process_latencies(unsigned long max_latency)
     /* Using the latencies stored in the linked list as keys,
        increments at latency in frequency table */
     temp = head;
-    while(temp != NULL)
-    {
+    while(temp != NULL) {
         freq_table[temp->lat]++;
         temp = temp->next;
     }
@@ -84,8 +79,7 @@ int show_percentile(unsigned long max_latency, unsigned long n_pings)
     size_t percentile_array_size = sizeof(percentile_array) / sizeof(percentile_array[0]);
     int percentile_idx = 0;
 
-    if(!freq_table)
-    {
+    if(!freq_table) {
         err_check = process_latencies(max_latency);
         if(err_check != NO_ERROR)
             return err_check;
@@ -93,8 +87,7 @@ int show_percentile(unsigned long max_latency, unsigned long n_pings)
 
     /* Get percentiles at these specified points */
     printf("\nPercentile\t Latency(us)\n");
-    for(i = 0; i < percentile_array_size; i++)
-    {
+    for(i = 0; i < percentile_array_size; i++) {
         percentile_idx = get_percentile_latency(percentile_array[i], max_latency, n_pings);
         printf("%7g%% \t %d\n", percentile_array[i], percentile_idx);
     }
@@ -114,8 +107,7 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
     unsigned long after_final_interval = 0;
     unsigned long leftover = 0;
 
-    if(!freq_table)
-    {
+    if(!freq_table) {
         err_check = process_latencies(max_latency);
         if(err_check != NO_ERROR)
             return err_check;
@@ -123,8 +115,7 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
 
     /* Print frequencies between 0 and starting interval */
     printf("\nInterval(usec)\t Frequency\n");
-    if (start > 0)
-    {
+    if (start > 0) {
         for(i = 0; i < start; i++)
             freq_counter += freq_table[i];
 
@@ -133,19 +124,16 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
 
     /*  Prints frequencies between each interval */
     freq_counter = 0;
-    for(lat_intervals = start; lat_intervals < final_interval; lat_intervals+=len)
-    {
+    for(lat_intervals = start; lat_intervals < final_interval; lat_intervals += len) {
         interval_start = 0;
-        if(lat_intervals > max_latency)
-        {
+        if(lat_intervals > max_latency) {
             printf("%7lu \t %d\n", lat_intervals, 0);
             if(lat_intervals + len == final_interval)
                 printf("%7lu \t %d\n", lat_intervals + len, 0);
             continue;
         }
 
-        while(interval_start < len)
-        {
+        while(interval_start < len) {
             if(lat_intervals + interval_start > max_latency)
                 break;
             freq_counter += freq_table[lat_intervals + interval_start];
@@ -156,8 +144,7 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
     }
 
     /* Print all leftover latencies after the final interval only if final interval < max latency */
-    if(final_interval < max_latency)
-    {
+    if(final_interval < max_latency) {
         after_final_interval = final_interval;
         for(leftover = after_final_interval; leftover <= max_latency; leftover++)
             freq_counter += freq_table[leftover];
@@ -175,15 +162,13 @@ void create_latencies_csv(const char *csv_filename)
     FILE *fp = NULL;
 
     fp = fopen(csv_filename, "w+");
-    if(fp == NULL)
-    {
+    if(fp == NULL) {
         PRINT_ERR("could not create csv file");
         return;
     }
 
     fprintf(fp, CSV_FILE_HEADER);
-    while(temp != NULL)
-    {
+    while(temp != NULL) {
         fprintf(fp, "%d, %lu\n", latency_idx, temp->lat);
         latency_idx++;
         temp = temp->next;
@@ -198,8 +183,7 @@ void create_freq_table_json(unsigned long max_latency, const char *file_name)
 
     FILE *fp = fopen(file_name, "w+");
 
-    if(fp == NULL)
-    {
+    if(fp == NULL) {
         PRINT_ERR("Error opening file to write json file");
         return;
     }
@@ -208,20 +192,16 @@ void create_freq_table_json(unsigned long max_latency, const char *file_name)
     fprintf(fp, "{\n");
     fprintf(fp, "\t\"latencies\":[\n");
 
-    for(latency = 0; latency <= max_latency; latency++)
-    {
+    for(latency = 0; latency <= max_latency; latency++) {
         if(freq_table[latency] == 0)
             continue;
 
         fprintf(fp, "\t\t{\n");
         fprintf(fp,"\t\t\t\"latency\": %d,\n", latency);
         fprintf(fp,"\t\t\t\"frequency\": %lu\n", freq_table[latency]);
-        if(latency == max_latency)
-        {
+        if(latency == max_latency) {
             fprintf(fp, "\t\t}\n");
-        }
-        else
-        {
+        } else {
             fprintf(fp, "\t\t},\n");
         }
     }
@@ -234,10 +214,9 @@ void create_freq_table_json(unsigned long max_latency, const char *file_name)
 void push(unsigned long lat)
 {
     node_t *tmp = new_node(lat);
-    if(head == NULL)
+    if(head == NULL) {
         head = tail = tmp;
-    else
-    {
+    } else {
         tail->next = tmp;
         tail = tail->next;
     }
@@ -248,8 +227,7 @@ void push(unsigned long lat)
 void latencies_stats_cleanup(void)
 {
     node_t *temp = NULL;
-    while(head != NULL)
-    {
+    while(head != NULL) {
         temp = head;
         head = head->next;
         free(temp);

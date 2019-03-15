@@ -79,14 +79,14 @@ void print_usage()
 	printf("\t-i   [SENDER ONLY] test interval       [default: %d second(s)]\n", DEFAULT_TEST_INTERVAL_SEC);
 	printf("\t     '-n' will be ignored if '-t' provided\n");
 
-	printf("\t-R   [SENDER ONLY] dumps latencies into csv file\n");
+	printf("\t-R   [SENDER ONLY] dumps raw latencies into csv file\n");
 
 	printf("\t-H   [SENDER ONLY] print histogram of per-iteration latency values\n");
 	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
-  printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
+	printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
@@ -95,12 +95,14 @@ void print_usage()
 	printf("\treceiver:\n");
 	printf("\t1) ./lagscope -r\n");
 	printf("\t2) ./lagscope -r192.168.1.1\n");
-	printf("\t3) ./late -r -D -f0 -6 -p 6789 -V\n");
+	printf("\t3) ./lagscope -r -D -f0 -6 -p 6789 -V\n");
 	printf("\tsender:\n");
 	printf("\t1) ./lagscope -s192.168.1.1\n");
 	printf("\t2) ./lagscope -s192.168.1.1 -t 600 -i 1 -V\n");
-	printf("\t3) ./lagscope -sfd00::1:1 -n 1000 -6 -i 2 -V\n");
+	printf("\t3) ./lagscope -s192.168.1.1 -n 1000 -6 -i 2 -V\n");
+	printf("\t1) ./lagscope -s192.168.1.1 -H -a 10 -l 1 -c 98\n");
 	printf("\t1) ./lagscope -s192.168.1.1 -Pfreq_table.json\n");
+	printf("\t1) ./lagscope -s192.168.1.1 -Rraw_latency_values.csv\n");
 }
 
 void print_version()
