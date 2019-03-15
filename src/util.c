@@ -61,7 +61,7 @@ void print_flags(struct lagscope_test *test)
 void print_usage()
 {
 	printf("Author: %s\n", AUTHOR_NAME);
-	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-G|-H|-a|-l|-c|-V|-h]\n\n");
+	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-P|-H|-a|-l|-c|-V|-h]\n\n");
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
 	printf("\t-D   Run as daemon\n");
@@ -84,7 +84,7 @@ void print_usage()
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
 
-	printf("\t-G   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
+	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
@@ -202,7 +202,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 		{"hist-start", required_argument, NULL, 'a'},
 		{"hist-len", required_argument, NULL, 'l'},
 		{"hist-count", required_argument, NULL, 'c'},
-		{"perc", no_argument, NULL, 'G'},
+		{"perc", no_argument, NULL, 'P'},
 		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -210,7 +210,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:GHa:l:c:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:PHa:l:c:Vh", longopts, NULL)) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -289,7 +289,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			test->verbose = true;
 			break;
 
-		case 'G':
+		case 'P':
 			test->perc = true;
 			break;
 
