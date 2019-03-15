@@ -85,8 +85,8 @@ void print_usage()
 	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
-
-	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies. Filename specified after -P option, will dump latency frequency table to a json file\n");
+	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
+  printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
 
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
@@ -306,6 +306,12 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 				test->freq_table_dump = true;
 				test->json_file_name = optarg;
 			}
+			break;
+
+		case 'R':
+			test->raw_dump = true;
+			if(optarg)
+				test->csv_file_name = optarg;
 			break;
 
 		case 'R':
