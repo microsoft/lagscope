@@ -33,6 +33,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv);
 void print_iteration_histogram();
 void print_test_stats();
 
+int process_latencies(unsigned long max_latency);
 int show_percentile(unsigned long, unsigned long);
 int show_histogram(int, int, int, unsigned long);
 void create_latencies_csv(const char *);

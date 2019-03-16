@@ -219,10 +219,10 @@ finished:
 	/* print ping statistics */
 	ASPRINTF(&log, "Ping statistics for %s:", ip_address_str);
 	PRINT_INFO_FREE(log);
-	ASPRINTF(&log, "\tNumber of successful Pings: %ld", n_pings);
+	ASPRINTF(&log, "\t  Number of successful Pings: %ld", n_pings);
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
-		ASPRINTF(&log, "\tMinimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
+		ASPRINTF(&log, "\t  Minimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
 			min_latency,
 			max_latency,
 			sum_latency/n_pings);
@@ -236,30 +236,31 @@ finished:
 		create_latencies_csv(test->csv_file_name);
 	}
 
-	/* function call to show percentiles */
-	if(test->perc) {
-		if(test->freq_table_dump) {
-			ASPRINTF(&log, "Dumping latency frequency table into json file: %s", test->json_file_name);
-			PRINT_INFO_FREE(log);
-			create_freq_table_json((unsigned long) max_latency, test->json_file_name);
-		}
-		latencies_stats_err_check = show_percentile(max_latency, n_pings);
-		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
-			PRINT_ERR("Memory allocation failed, aborting...");
-		}
-		else if(latencies_stats_err_check == ERROR_GENERAL) {
-			PRINT_ERR("Interanl Error, aborting...");
-		}
-	}
+	if (test->perc || test->hist) {
+		latencies_stats_err_check = process_latencies(max_latency);
 
-	/* function call to show histogram */
-	if(test->hist) {
-		latencies_stats_err_check = show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
-		if(latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
+		if (latencies_stats_err_check == NO_ERROR) {
+			/* function call to show percentiles */
+			if(test->perc) {
+				if(test->freq_table_dump) {
+					ASPRINTF(&log, "Dumping latency frequency table into json file: %s", test->json_file_name);
+					PRINT_INFO_FREE(log);
+					create_freq_table_json((unsigned long) max_latency, test->json_file_name);
+				}
+
+				show_percentile(max_latency, n_pings);
+			}
+
+			/* function call to show histogram */
+			if(test->hist) {
+				show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
+			}
+		} else if (latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
 			PRINT_ERR("Memory allocation failed, aborting...");
-		}
-		else if(latencies_stats_err_check == ERROR_GENERAL) {
+		} else if (latencies_stats_err_check == ERROR_GENERAL) {
 			PRINT_ERR("Interanl Error, aborting...");
+		} else {
+			PRINT_ERR("Unknown Error, aborting...");
 		}
 	}
 

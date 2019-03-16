@@ -45,16 +45,16 @@ static int get_percentile_latency(double percentile, unsigned long arr_size, uns
 }
 
 /* Builds latency frequency table from linked list */
-static int process_latencies(unsigned long max_latency)
+int process_latencies(unsigned long max_latency)
 {
     node_t * temp = NULL;
 
     freq_table = (unsigned long*) malloc(sizeof(unsigned long) * (max_latency + 1));
 
-	if(!freq_table)
-		return ERROR_MEMORY_ALLOC;
+    if(!freq_table)
+        return ERROR_MEMORY_ALLOC;
 
-	memset(freq_table, 0, (max_latency + 1) * sizeof(unsigned long));
+    memset(freq_table, 0, (max_latency + 1) * sizeof(unsigned long));
 
     if(head == NULL)
         return ERROR_GENERAL;
@@ -70,20 +70,13 @@ static int process_latencies(unsigned long max_latency)
     return NO_ERROR;
 }
 
-/* Public Functions */
+/* Print percentile */
 int show_percentile(unsigned long max_latency, unsigned long n_pings)
 {
-    int err_check = 0;
     unsigned int i = 0;
     double percentile_array[] = {50, 75, 90, 99.9, 99.99, 99.999};
     size_t percentile_array_size = sizeof(percentile_array) / sizeof(percentile_array[0]);
     int percentile_idx = 0;
-
-    if(!freq_table) {
-        err_check = process_latencies(max_latency);
-        if(err_check != NO_ERROR)
-            return err_check;
-    }
 
     /* Get percentiles at these specified points */
     printf("\nPercentile\t Latency(us)\n");
@@ -98,7 +91,6 @@ int show_percentile(unsigned long max_latency, unsigned long n_pings)
 /* Prints histogram with user specified inputs */
 int show_histogram(int start, int len, int count, unsigned long max_latency)
 {
-    int err_check = 0;
     int i = 0;
     unsigned long freq_counter = 0;
     unsigned long final_interval = (len * count) + start;
@@ -106,12 +98,6 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
     int interval_start = 0;
     unsigned long after_final_interval = 0;
     unsigned long leftover = 0;
-
-    if(!freq_table) {
-        err_check = process_latencies(max_latency);
-        if(err_check != NO_ERROR)
-            return err_check;
-    }
 
     /* Print frequencies between 0 and starting interval */
     printf("\nInterval(usec)\t Frequency\n");
