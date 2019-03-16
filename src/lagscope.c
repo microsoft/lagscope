@@ -48,9 +48,6 @@ void default_lagscope_test(struct lagscope_test *test)
 	test->raw_dump	       = false;
 	test->csv_file_name    = DEFAULT_CSV_FILENAME;
 
-	test->raw_dump	       = false;
-	test->csv_file_name    = DEFAULT_CSV_FILENAME;
-
 	test->verbose          = false;
 }
 
