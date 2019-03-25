@@ -218,7 +218,7 @@ Example run:
 ```
 paulkim@NODE2:~/lagscope/src# python3 visualize_data.py -json freq_table.json -img freq_graph.png
 INFO: Graph construction from freq_table.json is in progress...
-INFO: Graph Completed
+INFO: Graph construction completed
 INFO: Graph created in: freq_graph.png
 
 ```
