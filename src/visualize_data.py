@@ -65,5 +65,5 @@ if os.path.isfile(filename):
 
 plt.savefig(filename, bbox_inches = 'tight')
 
-print('INFO: Graph Completed')
+print('INFO: Graph construction completed')
 print('INFO: Graph created in: ' + filename + '\n')
