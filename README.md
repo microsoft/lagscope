@@ -172,6 +172,56 @@ lagscope 0.1.2
 19:38:32 INFO: Dumping all latencies into csv file: latencies_log.csv
 ```
 
+## Save latency frequency table graph as an image file
+
+### Installation Requirements:
+
+* Python3
+* pip3
+
+### Library Dependencies:
+
+* matplotlib
+* pandas
+* numpy
+
+To install libraries:
+
+```
+pip3 install matplotlib pandas numpy
+```
+
+Known Issue:
+
+Missing module, tkinter, not installed with Python3.
+
+To install tkinter:
+
+```
+sudo apt-get install python3-tk
+```
+
+### Usage
+
+```
+python3 visualize_data.py -h
+```
+
+### To Run
+
+```
+python3 visualize_data.py -json freq_table.json -img freq_graph.png
+```
+
+Example run:
+
+```
+paulkim@NODE2:~/lagscope/src# python3 visualize_data.py -json freq_table.json -img freq_graph.png
+INFO: Graph construction from freq_table.json is in progress...
+INFO: Graph construction completed
+INFO: Graph created in: freq_graph.png
+
+```
 
 ## Related topics
 
