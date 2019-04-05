@@ -181,7 +181,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
-		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
+		//divide by 2 to get one-way latency
+		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000 / 2;
 
 		push(latency);		// Push latency onto linked list
 
