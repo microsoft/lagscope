@@ -36,9 +36,10 @@ void print_test_stats();
 int process_latencies(unsigned long max_latency);
 int show_percentile(unsigned long, unsigned long);
 int show_histogram(int, int, int, unsigned long);
-void create_latencies_csv(const char *);
+void create_latencies_csv(struct lagscope_test *test, const char *);
 void create_freq_table_json(unsigned long, const char *);
-void push(unsigned long);
+void push_traffic_latency(unsigned long);
+void push_tcpi_rtt_latency(unsigned long);
 void latencies_stats_cleanup(void);
 
 double unit_atod(const char *s);

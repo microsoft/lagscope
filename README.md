@@ -149,19 +149,26 @@ Percentile       Latency(us)
  99.999%         3921
 ```
 
-### Example run to dump all latency values into a csv file
+### Example run to dump all latency and/or TCP round trip time values into a csv file
 
-On NODE2 (the sender), run:
+For sent and received timed latencies on NODE2 (the sender), run:
 ```
 ./lagscope -s192.168.4.1 -Rlatencies_log.csv
 ```
+OR
+
+For TCP socket's round trip times on NODE2 (the sender), run:
+```
+./lagscope -s192.168.4.1 -Ttcprtt_log.csv
+```
+
 (Translation: Run lagscope as a sender and dumps latencies into a csv file)
 
 
 Example sender-side output from a given run:
 
 ```
-paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -Rlatencies_log.csv
+paulkim@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -Rlatencies_log.csv -Ttcprtt_log.csv
 lagscope 0.1.2
 ---------------------------------------------------------
 19:38:31 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001
@@ -170,6 +177,7 @@ lagscope 0.1.2
 19:38:32 INFO:  Number of successful Pings: 1000000
 19:38:32 INFO:  Minimum = 96.083us, Maximum = 2828.121us, Average = 147.913us
 19:38:32 INFO: Dumping all latencies into csv file: latencies_log.csv
+19:38:32 INFO: Dumping TCP rtt into csv file: tcprtt_log.csv
 ```
 
 ## Save latency frequency table graph as an image file

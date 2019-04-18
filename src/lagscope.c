@@ -45,8 +45,10 @@ void default_lagscope_test(struct lagscope_test *test)
 	test->perc             = false;
 	test->freq_table_dump  = false;
 
-	test->raw_dump	       = false;
-	test->csv_file_name    = DEFAULT_CSV_FILENAME;
+	test->traffic_raw_dump	        = false;
+	test->traffic_raw_csv_filename  = DEFAULT_CSV_FILENAME;
+	test->tcpi_rtt_raw_dump         = false;
+	test->tcpi_rtt_raw_csv_filename = DEFAULT_RTT_CSV_FILENAME;
 
 	test->verbose          = false;
 }
