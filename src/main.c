@@ -31,19 +31,24 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	struct timeval now;
 	struct timeval send_time;
 	struct timeval recv_time;
-	double latency = 0;
+	double traffic_latency = 0;
+	unsigned long tcpi_rtt_latency = 0;
 	int i = 0;
 
 	/* for ping statistics */
 	unsigned long n_pings = 0; //number of pings
-	double max_latency = 0;
-	double min_latency = 60000; //60 seconds
-	double sum_latency = 0;
+	double traffic_max_latency = 0;
+	double traffic_min_latency = 60000; //60 seconds
+	double traffic_sum_latency = 0;
 
 	int latencies_stats_err_check = 0;
 
 	verbose_log = test->verbose;
 	test_runtime = new_test_runtime(test);
+
+	struct tcp_info tcpinfo;
+	socklen_t tcp_info_length = sizeof(tcpinfo);
+
 
 	ip_address_max_size = (test->domain == AF_INET? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 	if ((ip_address_str = (char *)malloc(ip_address_max_size)) == (char *)NULL) {
@@ -181,14 +186,24 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
-		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
+		traffic_latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
-		push(latency);		// Push latency onto linked list
+		push_traffic_latency(traffic_latency);		// Push latency onto linked list
+
+		if(test->tcpi_rtt_raw_dump) {
+			if(getsockopt(sockfd, IPPROTO_TCP, TCP_INFO, &tcpinfo, &tcp_info_length) != 0) {
+				PRINT_INFO("getsockopt (TCP_INFO) failed");
+			}
+			else {
+				tcpi_rtt_latency = tcpinfo.tcpi_rtt;
+				push_tcpi_rtt_latency(tcpi_rtt_latency);
+			}
+		}
 
 		ASPRINTF(&log, "Reply from %s: bytes=%d time=%.3fus",
 				ip_address_str,
 				n,
-				latency);
+				traffic_latency);
 		PRINT_DBG_FREE(log);
 
 		n_pings++;
@@ -196,11 +211,11 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		test_runtime->ping_elapsed = n_pings;
 
 		/* calculate max. avg. min. */
-		sum_latency += latency;
-		if (max_latency < latency)
-			max_latency = latency;
-		if (min_latency > latency)
-			min_latency = latency;
+		traffic_sum_latency += traffic_latency;
+		if (traffic_max_latency < traffic_latency)
+			traffic_max_latency = traffic_latency;
+		if (traffic_min_latency > traffic_latency)
+			traffic_min_latency = traffic_latency;
 
 		if (test->test_mode == PING_ITERATION)
 			if (n_pings >= test->iteration)
@@ -223,21 +238,28 @@ finished:
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
 		ASPRINTF(&log, "\t  Minimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
-			min_latency,
-			max_latency,
-			sum_latency/n_pings);
+			traffic_min_latency,
+			traffic_max_latency,
+			traffic_sum_latency/n_pings);
 		PRINT_INFO_FREE(log);
 	}
 
 	/* function call to dump latencies into a csv file */
-	if(test->raw_dump) {
-		ASPRINTF(&log, "Dumping all latencies into csv file: %s", test->csv_file_name);
+	if(test->traffic_raw_dump) {
+		ASPRINTF(&log, "Dumping all latencies into csv file: %s", test->traffic_raw_csv_filename);
 		PRINT_INFO_FREE(log);
-		create_latencies_csv(test->csv_file_name);
+		create_latencies_csv(test, test->traffic_raw_csv_filename);
+		test->traffic_raw_dump = false;
+	}
+
+	if(test->tcpi_rtt_raw_dump) {
+		ASPRINTF(&log, "Dumping all TCP rtt into csv file: %s", test->tcpi_rtt_raw_csv_filename);
+		PRINT_INFO_FREE(log);
+		create_latencies_csv(test, test->tcpi_rtt_raw_csv_filename);
 	}
 
 	if (test->perc || test->hist) {
-		latencies_stats_err_check = process_latencies(max_latency);
+		latencies_stats_err_check = process_latencies(traffic_max_latency);
 
 		if (latencies_stats_err_check == NO_ERROR) {
 			/* function call to show percentiles */
@@ -245,15 +267,15 @@ finished:
 				if(test->freq_table_dump) {
 					ASPRINTF(&log, "Dumping latency frequency table into json file: %s", test->json_file_name);
 					PRINT_INFO_FREE(log);
-					create_freq_table_json((unsigned long) max_latency, test->json_file_name);
+					create_freq_table_json((unsigned long) traffic_max_latency, test->json_file_name);
 				}
 
-				show_percentile(max_latency, n_pings);
+				show_percentile(traffic_max_latency, n_pings);
 			}
 
 			/* function call to show histogram */
 			if(test->hist) {
-				show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
+				show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) traffic_max_latency);
 			}
 		} else if (latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
 			PRINT_ERR("Memory allocation failed, aborting...");

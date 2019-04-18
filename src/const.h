@@ -12,6 +12,7 @@
 #define UDP 				SOCK_DGRAM
 
 #define DEFAULT_CSV_FILENAME          "latencies_log.csv"
+#define DEFAULT_RTT_CSV_FILENAME      "tcprtt_latencies_log.csv"
 
 #define TIME_DURATION			1
 #define PING_ITERATION			2

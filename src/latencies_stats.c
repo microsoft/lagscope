@@ -9,8 +9,12 @@ typedef struct node
     struct node *next;
 }node_t;
 
-static node_t *head = NULL;     // start of the latency list
-static node_t *tail = NULL;     // end of the latency list
+static node_t *traffic_head = NULL;     // start of the latency list
+static node_t *traffic_tail = NULL;     // end of the latency list
+
+
+static node_t *tcpi_rtt_head = NULL;   // start of the tcp_rtt latency list
+static node_t *tcpi_rtt_tail = NULL;     // end of the tcp_rtt latency list
 
 /* A Hashtable where the keys are the latencies and the values are the frequencies of that latency */
 static unsigned long *freq_table = NULL;
@@ -56,12 +60,12 @@ int process_latencies(unsigned long max_latency)
 
     memset(freq_table, 0, (max_latency + 1) * sizeof(unsigned long));
 
-    if(head == NULL)
+    if(traffic_head == NULL)
         return ERROR_GENERAL;
 
     /* Using the latencies stored in the linked list as keys,
        increments at latency in frequency table */
-    temp = head;
+    temp = traffic_head;
     while(temp != NULL) {
         freq_table[temp->lat]++;
         temp = temp->next;
@@ -141,9 +145,16 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
     return NO_ERROR;
 }
 
-void create_latencies_csv(const char *csv_filename)
+void create_latencies_csv(struct lagscope_test *test, const char *csv_filename)
 {
-    node_t * temp = head;
+    node_t * temp = NULL;
+    if(test->traffic_raw_dump) {
+        temp = traffic_head;
+    }
+    else if(test->tcpi_rtt_raw_dump) {
+        temp = tcpi_rtt_head;
+    }
+
     unsigned int latency_idx = 0;
     FILE *fp = NULL;
 
@@ -197,14 +208,26 @@ void create_freq_table_json(unsigned long max_latency, const char *file_name)
     fclose(fp);
 }
 
-void push(unsigned long lat)
+void push_traffic_latency(unsigned long lat)
 {
     node_t *tmp = new_node(lat);
-    if(head == NULL) {
-        head = tail = tmp;
+    if(traffic_head == NULL) {
+        traffic_head = traffic_tail = tmp;
     } else {
-        tail->next = tmp;
-        tail = tail->next;
+        traffic_tail->next = tmp;
+        traffic_tail = traffic_tail->next;
+    }
+    return;
+}
+
+void push_tcpi_rtt_latency(unsigned long lat)
+{
+    node_t *tmp = new_node(lat);
+    if(tcpi_rtt_head == NULL) {
+        tcpi_rtt_head = tcpi_rtt_tail = tmp;
+    } else {
+        tcpi_rtt_tail->next = tmp;
+        tcpi_rtt_tail = tcpi_rtt_tail->next;
     }
     return;
 }
@@ -213,12 +236,18 @@ void push(unsigned long lat)
 void latencies_stats_cleanup(void)
 {
     node_t *temp = NULL;
-    while(head != NULL) {
-        temp = head;
-        head = head->next;
+    while(traffic_head != NULL) {
+        temp = traffic_head;
+        traffic_head = traffic_head->next;
         free(temp);
     }
-    head = NULL;
+    while(tcpi_rtt_head != NULL) {
+        temp = tcpi_rtt_head;
+        tcpi_rtt_head = tcpi_rtt_head->next;
+        free(temp);
+    }
+    traffic_head = NULL;
+    tcpi_rtt_head = NULL;
     if(freq_table)
         free(freq_table);
     return;

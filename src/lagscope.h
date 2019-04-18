@@ -47,8 +47,10 @@ struct lagscope_test
 	bool	freq_table_dump;     /* if there's an argument after -P */
 	char	*json_file_name;     /* name of the file frequency table will be dumped into, follows '-P' */
 
-	bool	raw_dump;	     /* '-R' for dumping latencies into a file */
-	char	*csv_file_name;	     /* name of the file being dumped into, follows '-R' */
+	bool	traffic_raw_dump;	     /* '-R' for dumping latencies into a file */
+	char	*traffic_raw_csv_filename;   /* name of the file being dumped into, follows '-R' */
+	bool	tcpi_rtt_raw_dump;	     /* '-T' for dumping rtt latencies from tcp socket into a file */
+	char	*tcpi_rtt_raw_csv_filename;  /* name of the file tcp rtt latencies will be dumped into, follow '-T' */
 	/* end of client-only parameters */
 
 	bool    verbose;             /* '-V' for verbose logging */
