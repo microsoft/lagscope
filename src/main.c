@@ -196,9 +196,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		goto finished;
 
 	while (is_light_turned_on()) {
-		gettimeofday(&now, NULL);
-		send_time = now;
-
 		/* Interop with latte.exe:
 		 * latte needs iteration count in data */
 		buffer[3] = (n_pings >> 24);
@@ -206,11 +203,15 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		buffer[1] = (n_pings >> 8);
 		buffer[0] = (n_pings /*>> 0*/);
 
+		gettimeofday(&now, NULL);
+		send_time = now;
+
 		if ((n = n_write_read(sockfd, buffer, msg_actual_size)) < 0)
 			goto finished;
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
+
 		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
 		push(latency);		// Push latency onto linked list
