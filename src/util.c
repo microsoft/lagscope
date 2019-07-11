@@ -88,6 +88,7 @@ void print_usage()
 	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
 	printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
 
+	printf("\t-L   Interop with Latte.exe\n");
 	printf("\t-V   Verbose mode\n");
 	printf("\t-h   Help, tool usage\n");
 
@@ -215,6 +216,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 		{"hist-count", required_argument, NULL, 'c'},
 		{"perc", optional_argument, NULL, 'P'},
 		{"raw_dump", optional_argument, NULL, 'R'},
+		{"latte", no_argument, NULL, 'L'},
 		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -222,7 +224,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:LVh", longopts, NULL)) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -295,6 +297,10 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'c':
 			test->hist_count = atoi(optarg);
+			break;
+
+		case 'L':
+			test->latte = true;
 			break;
 
 		case 'V':

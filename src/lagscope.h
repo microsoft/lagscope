@@ -51,6 +51,7 @@ struct lagscope_test
 	char	*csv_file_name;	     /* name of the file being dumped into, follows '-R' */
 	/* end of client-only parameters */
 
+	bool    latte;               /* '-L' interop with latte.exe */
 	bool    verbose;             /* '-V' for verbose logging */
 };
 

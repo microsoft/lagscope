@@ -164,6 +164,22 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	while (is_light_turned_on()) {
 		gettimeofday(&now, NULL);
 		send_time = now;
+
+		if (test->latte) {
+			test->iteration++;
+			if ( n_pings == 0 ) {
+				buffer[0] = 0xd0;
+				buffer[1] = 0x14;
+				buffer[2] = 0x0;
+				buffer[3] = 0x0;
+			} else {
+				buffer[3] = ( (n_pings-1) >> 24);
+				buffer[2] = ( (n_pings-1) >> 16);
+				buffer[1] = ( (n_pings-1) >> 8);
+				buffer[0] = ( (n_pings-1) /*>> 0*/);
+			}
+		}
+
 		if ((n = n_write(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
 			if (n < 0) {
 				PRINT_ERR("socket error. cannot write data to a socket");
@@ -436,6 +452,9 @@ int lagscope_server_select(struct lagscope_test_server *server)
 		free(buffer);
 		return ERROR_MEMORY_ALLOC;
 	}
+
+	if (test->latte)
+		test->iteration++;
 
 	/* accept new client, receive data from client */
 	while (1) {
