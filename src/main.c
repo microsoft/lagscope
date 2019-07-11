@@ -6,6 +6,28 @@
 
 #include "main.h"
 
+static int n_write_read(int sockfd, char *buffer, int msg_actual_size)
+{
+	int n = 0; //write n bytes to socket
+
+	if ((n = n_write(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
+		if (n < 0) {
+			PRINT_ERR("socket error. cannot write data to a socket");
+		}
+		else {
+			PRINT_ERR("failed to send all bytes");
+		}
+		return ERROR_NETWORK_WRITE;
+	}
+
+	if ((n = n_read(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
+		PRINT_ERR("failed to receive bytes from server");
+		return ERROR_NETWORK_READ;
+	}
+
+	return n;
+}
+
 /************************************************************/
 //		lagscope sender
 /************************************************************/
@@ -153,6 +175,13 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	}
 	memset(buffer, 'A', msg_actual_size);
 
+	/* Interop with latte.exe:
+	 * Start test control byte of latte */
+	buffer[0] = 0xd0;
+	buffer[1] = 0x14;
+	buffer[2] = 0x0;
+	buffer[3] = 0x0;
+
 	//begin ping test
 	turn_on_light();
 	if (test->test_mode == TIME_DURATION)
@@ -161,26 +190,28 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	gettimeofday(&now, NULL);
 	test_runtime->start_time = now;
 
+	/* Interop with latte.exe:
+	 * First send control byte */
+	if (n_write_read(sockfd, buffer, msg_actual_size) < 0)
+		goto finished;
+
 	while (is_light_turned_on()) {
+		/* Interop with latte.exe:
+		 * latte needs iteration count in data */
+		buffer[3] = (n_pings >> 24);
+		buffer[2] = (n_pings >> 16);
+		buffer[1] = (n_pings >> 8);
+		buffer[0] = (n_pings /*>> 0*/);
+
 		gettimeofday(&now, NULL);
 		send_time = now;
-		if ((n = n_write(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
-			if (n < 0) {
-				PRINT_ERR("socket error. cannot write data to a socket");
-			}
-			else {
-				PRINT_ERR("failed to send all bytes");
-			}
 
+		if ((n = n_write_read(sockfd, buffer, msg_actual_size)) < 0)
 			goto finished;
-		}
-		if ((n = n_read(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
-			PRINT_ERR("failed to receive bytes from server");
-			goto finished;
-		}
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
+
 		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
 
 		push(latency);		// Push latency onto linked list
