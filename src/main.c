@@ -153,6 +153,12 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	}
 	memset(buffer, 'A', msg_actual_size);
 
+	/* Use control byte of latte.exe */
+	buffer[0] = 0xd0;
+	buffer[1] = 0x14;
+	buffer[2] = 0x0;
+	buffer[3] = 0x0;
+
 	//begin ping test
 	turn_on_light();
 	if (test->test_mode == TIME_DURATION)
@@ -164,21 +170,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	while (is_light_turned_on()) {
 		gettimeofday(&now, NULL);
 		send_time = now;
-
-		if (test->latte) {
-			test->iteration++;
-			if ( n_pings == 0 ) {
-				buffer[0] = 0xd0;
-				buffer[1] = 0x14;
-				buffer[2] = 0x0;
-				buffer[3] = 0x0;
-			} else {
-				buffer[3] = ( (n_pings-1) >> 24);
-				buffer[2] = ( (n_pings-1) >> 16);
-				buffer[1] = ( (n_pings-1) >> 8);
-				buffer[0] = ( (n_pings-1) /*>> 0*/);
-			}
-		}
 
 		if ((n = n_write(sockfd, buffer, msg_actual_size)) != msg_actual_size) {
 			if (n < 0) {
@@ -194,6 +185,12 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			PRINT_ERR("failed to receive bytes from server");
 			goto finished;
 		}
+
+		/* latte.exe needs this, it looks in data read for iteration */
+		buffer[3] = (n_pings >> 24);
+		buffer[2] = (n_pings >> 16);
+		buffer[1] = (n_pings >> 8);
+		buffer[0] = (n_pings /*>> 0*/);
 
 		gettimeofday(&now, NULL);
 		recv_time = now;
@@ -453,9 +450,6 @@ int lagscope_server_select(struct lagscope_test_server *server)
 		return ERROR_MEMORY_ALLOC;
 	}
 
-	if (test->latte)
-		test->iteration++;
-
 	/* accept new client, receive data from client */
 	while (1) {
 		memcpy(&read_set, &server->read_set, sizeof(fd_set));
@@ -633,6 +627,9 @@ int main(int argc, char **argv)
 		if (daemon(0, 0) != 0)
 			PRINT_ERR("main: cannot run this tool in the background");
 	}
+
+	/* latte.exe need an extra iteration for first control bytes trascation */
+	test->iteration++;
 
 	if (test->client_role == true) {
 		client = new_lagscope_client(test);
