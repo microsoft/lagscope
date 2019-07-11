@@ -171,7 +171,9 @@ int verify_args(struct lagscope_test *test)
 		}
 	}
 
-	if (test->msg_size < 1) {
+	/* Interop with latte.exe:
+	 * latte needs minimum 4 bytes of data */
+	if (test->msg_size < 4) {
 		PRINT_INFO("invalid message size. use default value.");
 		test->msg_size = DEFAULT_MESSAGE_SIZE_BYTES;
 	}
