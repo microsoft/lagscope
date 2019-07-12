@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef TCPSTREAM_H
+#define TCPSTREAM_H
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -18,3 +21,5 @@
 int n_read(int fd, char *buffer, size_t total);
 int n_write(int fd, const char *buffer, size_t total);
 //int set_socket_non_blocking(int fd);
+
+#endif // TCPSTREAM_H

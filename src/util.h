@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef UTIL_H
+#define UTIL_H
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -71,3 +74,5 @@ static inline void report_progress(struct lagscope_test_runtime *test_runtime)
 	}
 	fflush(stdout);
 }
+
+#endif // UTIL_H

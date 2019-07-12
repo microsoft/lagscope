@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -24,3 +27,5 @@ int is_light_turned_on( void );
 
 void sig_handler(int signo);
 void run_test_timer(int duration);
+
+#endif // CONTROLLER_H

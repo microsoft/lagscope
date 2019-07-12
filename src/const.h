@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef CONST_H
+#define CONST_H
+
 #define TOOL_NAME "lagscope"
 #define TOOL_VERSION "0.2.0"
 #define AUTHOR_NAME "Shihua (Simon) Xiao, sixiao@microsoft.com"
@@ -53,3 +56,5 @@
 #define HIST_DEFAULT_INTERVAL_COUNT	10
 #define HIST_MAX_INTERVAL_COUNT		100
 #define HIST_MAX_INTERVAL_COUNT_USER	100 - 2
+
+#endif // CONST_H

@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef LAGSCOPE_H
+#define LAGSCOPE_H
+
 #define _GNU_SOURCE
 
 #include <stdbool.h>
@@ -84,3 +87,5 @@ void default_lagscope_test(struct lagscope_test *test);
 struct lagscope_test_server *new_lagscope_server(struct lagscope_test *test);
 struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test);
 struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test);
+
+#endif // LAGSCOPE_H

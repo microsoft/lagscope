@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -16,3 +19,5 @@
 #include "util.h"
 #include "tcpstream.h"
 #include "controller.h"
+
+#endif // MAIN_H

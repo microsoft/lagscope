@@ -4,6 +4,8 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef LOGGER_H
+#define LOGGER_H
 //include time.h when calling localtime()
 #define PRINT_LOG(x, y) { \
 	time_t rawtime; \
@@ -43,3 +45,5 @@
 	if (nc < 0) \
 		PRINT_ERR("error occurs in asprintf"); \
 }
+
+#endif // LOGGER_H
