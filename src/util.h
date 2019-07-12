@@ -9,22 +9,7 @@
 
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include <string.h>
-#include <unistd.h>
-#include <inttypes.h>
-#include <getopt.h>
-#include <time.h>
-#include <math.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-
+#include "common.h"
 #include "lagscope.h"
 
 void print_flags(struct lagscope_test *test);

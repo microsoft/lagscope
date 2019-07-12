@@ -9,14 +9,7 @@
 
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <signal.h>
-#include <time.h>
-#include <sys/time.h>
-
+#include "common.h"
 #include "logger.h"
 
 void turn_on_light( void );
