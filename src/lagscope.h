@@ -24,7 +24,7 @@ struct lagscope_test
 
 	int     domain;              /* default for AF_INET, or '-6' for AF_INET6 */
 	int     protocol;            /* default for SOCK_STREAM for TCP, or '-u' for SOCK_DGRAM for UDP (does not support UDP for now) */
-	uint    server_port;         /* '-p' for server listening base port */
+	unsigned int    server_port; /* '-p' for server listening base port */
 	double  recv_buf_size;       /* '-b' for receive buffer option */
 	double  send_buf_size;       /* '-B' for send buffer option */
 
