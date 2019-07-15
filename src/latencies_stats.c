@@ -67,7 +67,7 @@ int process_latencies(unsigned long max_latency)
         temp = temp->next;
     }
 
-    return NO_ERROR;
+    return NO_ERR;
 }
 
 /* Print percentile */
@@ -85,7 +85,7 @@ int show_percentile(unsigned long max_latency, unsigned long n_pings)
         printf("%7g%% \t %d\n", percentile_array[i], percentile_idx);
     }
 
-    return NO_ERROR;
+    return NO_ERR;
 }
 
 /* Prints histogram with user specified inputs */
@@ -138,7 +138,7 @@ int show_histogram(int start, int len, int count, unsigned long max_latency)
         printf("%7lu \t %lu\n", after_final_interval, freq_counter);
     }
 
-    return NO_ERROR;
+    return NO_ERR;
 }
 
 void create_latencies_csv(const char *csv_filename)

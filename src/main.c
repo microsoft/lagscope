@@ -270,7 +270,7 @@ finished:
 	if (test->perc || test->hist) {
 		latencies_stats_err_check = process_latencies(max_latency);
 
-		if (latencies_stats_err_check == NO_ERROR) {
+		if (latencies_stats_err_check == NO_ERR) {
 			/* function call to show percentiles */
 			if(test->perc) {
 				if(test->freq_table_dump) {
@@ -439,7 +439,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 
 int lagscope_server_select(struct lagscope_test_server *server)
 {
-	int err_code = NO_ERROR;
+	int err_code = NO_ERR;
 	int opt = 0;
 	char *log = NULL;
 	struct lagscope_test *test = server->test;
@@ -582,7 +582,7 @@ long run_lagscope_receiver(struct lagscope_test_server *server)
 		PRINT_ERR_FREE(log);
 	}
 	else {
-		if (lagscope_server_select(server) != NO_ERROR) {
+		if (lagscope_server_select(server) != NO_ERR) {
 			ASPRINTF(&log, "select error at port: %d", server->test->server_port);
 			PRINT_ERR_FREE(log);
 		}
@@ -593,7 +593,7 @@ long run_lagscope_receiver(struct lagscope_test_server *server)
 
 int main(int argc, char **argv)
 {
-	int err_code = NO_ERROR;
+	int err_code = NO_ERR;
 	cpu_set_t cpuset;
 	struct lagscope_test *test;
 	struct lagscope_test_server *server;
@@ -612,7 +612,7 @@ int main(int argc, char **argv)
 
 	default_lagscope_test(test);
 	err_code = parse_arguments(test, argc, argv);
-	if (err_code != NO_ERROR) {
+	if (err_code != NO_ERR) {
 		PRINT_ERR("main: error when parsing args");
 		print_flags(test);
 		free(test);
@@ -620,7 +620,7 @@ int main(int argc, char **argv)
 	}
 
 	err_code = verify_args(test);
-	if (err_code != NO_ERROR) {
+	if (err_code != NO_ERR) {
 		PRINT_ERR("main: error when verifying the args");
 		print_flags(test);
 		free(test);

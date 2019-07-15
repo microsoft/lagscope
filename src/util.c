@@ -191,7 +191,7 @@ int verify_args(struct lagscope_test *test)
 	if (test->domain == AF_INET6 && strcmp(test->bind_address, "0.0.0.0") == 0)
 		test->bind_address = "::";
 
-	return NO_ERROR;
+	return NO_ERR;
 }
 
 int parse_arguments(struct lagscope_test *test, int argc, char **argv)
@@ -324,7 +324,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			exit(ERROR_ARGS);
 		}
 	}
-	return NO_ERROR;
+	return NO_ERR;
 }
 
 void print_iteration_histogram()
