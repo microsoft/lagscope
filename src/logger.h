@@ -6,7 +6,7 @@
 
 #ifndef LOGGER_H
 #define LOGGER_H
-//include time.h when calling localtime()
+
 #define PRINT_LOG(x, y) { \
 	time_t rawtime; \
 	struct tm * timeinfo; \
