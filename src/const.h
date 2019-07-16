@@ -4,6 +4,9 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef CONST_H
+#define CONST_H
+
 #define TOOL_NAME "lagscope"
 #define TOOL_VERSION "0.2.0"
 #define AUTHOR_NAME "Shihua (Simon) Xiao, sixiao@microsoft.com"
@@ -36,7 +39,7 @@
 #define DEFAULT_TEST_ITERATION		1000000
 #define DEFAULT_TEST_INTERVAL_SEC	0
 
-#define NO_ERROR			0
+#define NO_ERR				0
 #define ERROR_GENERAL			-1000
 #define ERROR_ARGS			-1001
 #define ERROR_MEMORY_ALLOC		-1002
@@ -53,3 +56,5 @@
 #define HIST_DEFAULT_INTERVAL_COUNT	10
 #define HIST_MAX_INTERVAL_COUNT		100
 #define HIST_MAX_INTERVAL_COUNT_USER	100 - 2
+
+#endif // CONST_H

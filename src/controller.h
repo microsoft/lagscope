@@ -4,16 +4,12 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <signal.h>
-#include <time.h>
-#include <sys/time.h>
-
+#include "common.h"
 #include "logger.h"
 
 void turn_on_light( void );
@@ -24,3 +20,5 @@ int is_light_turned_on( void );
 
 void sig_handler(int signo);
 void run_test_timer(int duration);
+
+#endif // CONTROLLER_H

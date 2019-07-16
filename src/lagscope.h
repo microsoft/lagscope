@@ -4,15 +4,12 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef LAGSCOPE_H
+#define LAGSCOPE_H
+
 #define _GNU_SOURCE
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
+#include "common.h"
 #include "const.h"
 #include "logger.h"
 
@@ -27,7 +24,7 @@ struct lagscope_test
 
 	int     domain;              /* default for AF_INET, or '-6' for AF_INET6 */
 	int     protocol;            /* default for SOCK_STREAM for TCP, or '-u' for SOCK_DGRAM for UDP (does not support UDP for now) */
-	uint    server_port;         /* '-p' for server listening base port */
+	unsigned int    server_port; /* '-p' for server listening base port */
 	double  recv_buf_size;       /* '-b' for receive buffer option */
 	double  send_buf_size;       /* '-B' for send buffer option */
 
@@ -84,3 +81,5 @@ void default_lagscope_test(struct lagscope_test *test);
 struct lagscope_test_server *new_lagscope_server(struct lagscope_test *test);
 struct lagscope_test_client *new_lagscope_client(struct lagscope_test *test);
 struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test);
+
+#endif // LAGSCOPE_H

@@ -22,7 +22,12 @@ A Linux tool to measure the network transport layer latency.
 ### Building lagscope
 
 ```
-make; make install
+cd src
+mkdir build
+cd build
+cmake ..
+cmake --build .
+cmake --build . --target install
 ```
 
 ### Usage

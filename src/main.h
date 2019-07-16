@@ -4,15 +4,14 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <netdb.h>
-#include <netinet/tcp.h>
-
+#include "common.h"
 #include "util.h"
 #include "tcpstream.h"
 #include "controller.h"
+
+#endif // MAIN_H
