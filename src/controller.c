@@ -7,50 +7,20 @@
 #include "controller.h"
 
 static int run_light = 0;
-static pthread_mutex_t light_mutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t wait_light = PTHREAD_COND_INITIALIZER;
 
 void turn_on_light( void )
 {
-	pthread_mutex_lock( &light_mutex );
 	run_light = 1;
-	pthread_cond_broadcast( &wait_light );
-	pthread_mutex_unlock( &light_mutex );
 }
 
 void turn_off_light( void )
 {
-	pthread_mutex_lock( &light_mutex );
 	run_light = 0;
-	pthread_cond_broadcast( &wait_light );
-	pthread_mutex_unlock( &light_mutex );
-}
-
-void wait_light_on( void )
-{
-	pthread_mutex_lock( &light_mutex );
-	while (run_light == 0)
-		pthread_cond_wait( &wait_light, &light_mutex );
-	pthread_mutex_unlock( &light_mutex );
-}
-
-void wait_light_off( void )
-{
-	pthread_mutex_lock( &light_mutex );
-	while (run_light != 0)
-		pthread_cond_wait( &wait_light, &light_mutex );
-	pthread_mutex_unlock( &light_mutex );
 }
 
 int is_light_turned_on( void )
 {
-	int temp;
-
-	pthread_mutex_lock( &light_mutex );
-	temp = run_light;
-	pthread_mutex_unlock( &light_mutex );
-
-	return temp;
+	return run_light;
 }
 
 /************************************************************/
