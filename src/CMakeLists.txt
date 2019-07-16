@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project (Lagscope)
+project (Lagscope C)
 file(GLOB CSources *.c)
 add_executable(lagscope ${CSources})
 if(UNIX)
