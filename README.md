@@ -19,7 +19,11 @@ A Linux tool to measure the network transport layer latency.
 
 ## Getting Started
 
-### Building lagscope
+### Building & installing lagscope
+
+On Linux, install cmake & gcc. On Windows, install cmake & Visual
+studio with C compiler. Run the following commands in terminal shell
+on Linux and in Developer Command Prompt on Windows.
 
 ```
 cd src
