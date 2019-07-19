@@ -12,6 +12,10 @@
 #include "common.h"
 #include "lagscope.h"
 
+#ifdef _WIN32
+int asprintf(char **strp, const char *format, ...);
+#endif
+
 void print_flags(struct lagscope_test *test);
 void print_usage();
 void print_version();

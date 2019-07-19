@@ -6,6 +6,34 @@
 
 #include "util.h"
 
+#ifdef _WIN32
+static int vasprintf(char **strp, const char *format, va_list ap)
+{
+	int len = _vscprintf(format, ap);
+	if (len == -1)
+		return -1;
+	char *str = (char*)malloc((size_t) len + 1);
+	if (!str)
+		return -1;
+	int rv = vsnprintf(str, len + 1, format, ap);
+	if (rv == -1) {
+		free(str);
+		return -1;
+	}
+	*strp = str;
+	return rv;
+}
+
+int asprintf(char **strp, const char *format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+	int rv = vasprintf(strp, format, ap);
+	va_end(ap);
+	return rv;
+}
+#endif
+
 void print_flags(struct lagscope_test *test)
 {
 	if (test->server_role)
