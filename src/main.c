@@ -532,7 +532,7 @@ int lagscope_server_select(struct lagscope_test_server *server)
 			}
 			/* handle data from an EXISTING client */
 			else {
-				bzero(buffer, msg_actual_size);
+				memset(buffer, 0, msg_actual_size);
 
 				/* got error or connection closed by client */
 				if ((nbytes = n_read(current_fd, buffer, msg_actual_size)) <= 0) {
