@@ -580,7 +580,6 @@ long run_lagscope_receiver(struct lagscope_test_server *server)
 int main(int argc, char **argv)
 {
 	int err_code = NO_ERR;
-	cpu_set_t cpuset;
 	struct lagscope_test *test;
 	struct lagscope_test_server *server;
 	struct lagscope_test_client *client;
@@ -619,17 +618,28 @@ int main(int argc, char **argv)
 	turn_off_light();
 
 	if (test->cpu_affinity != -1) {
+#ifndef _WIN32
+		cpu_set_t cpuset;
 		CPU_ZERO(&cpuset);
 		CPU_SET(test->cpu_affinity, &cpuset);
 		PRINT_INFO("main: set cpu affinity");
 		if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) != 0)
 			PRINT_ERR("main: cannot set cpu affinity");
+#else
+		test->cpu_affinity = -1;
+		PRINT_INFO("main: set cpu affinity: Lagscope currently do not support this option in Windows ");
+#endif
 	}
 
 	if (test->daemon) {
+#ifndef _WIN32
 		PRINT_INFO("main: run this tool in the background");
 		if (daemon(0, 0) != 0)
 			PRINT_ERR("main: cannot run this tool in the background");
+#else
+		test->daemon = 0;
+		PRINT_INFO("main: run in background: Lagscope currently do not support this option in Windows ");
+#endif
 	}
 
 	if (test->client_role == true) {
