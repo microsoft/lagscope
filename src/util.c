@@ -194,6 +194,32 @@ int verify_args(struct lagscope_test *test)
 	return NO_ERR;
 }
 
+#ifdef _WIN32
+static char* optarg = NULL;
+static int optind = 1;
+
+static int getopt(int argc, char *const argv[], const char *optstr)
+{
+	if ((optind >= argc) || (argv[optind][0] != '-') || (argv[optind][0] == 0))
+		return -1;
+
+	int opt = argv[optind][1];
+	const char *p = strchr(optstr, opt);
+
+	if (p == NULL)
+		return '?';
+
+	if (p[1] == ':') {
+		optarg = &argv[optind][2];
+		if (optarg[0] == 0)
+			optarg = NULL;
+	}
+
+	optind++;
+	return opt;
+}
+#endif
+
 int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 {
 	int flag;
