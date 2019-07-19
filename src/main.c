@@ -70,7 +70,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	ip_address_max_size = (test->domain == AF_INET? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 	if ((ip_address_str = (char *)malloc(ip_address_max_size)) == (char *)NULL) {
 		PRINT_ERR("cannot allocate memory for ip address string");
-		freeaddrinfo(serv_info);
 		return 0;
 	}
 
