@@ -45,6 +45,9 @@
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
+// Todo: Try to remove this pragma
+#pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
+
 #endif // _WIN32
 
 #endif // COMMON_H
