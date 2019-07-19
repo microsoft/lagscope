@@ -46,6 +46,7 @@ void timer_fired()
 
 void run_test_timer(int duration)
 {
+#ifndef _WIN32
 	struct itimerval it_val;
 
 	it_val.it_value.tv_sec = duration;
@@ -61,4 +62,7 @@ void run_test_timer(int duration)
 		PRINT_ERR("unable to set test timer: setitimer ITIMER_REAL failed");
 		exit(1);
 	}
+#else
+	SetTimer(NULL, 0, duration*1000, (TIMERPROC) timer_fired);
+#endif
 }
