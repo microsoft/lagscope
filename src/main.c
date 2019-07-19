@@ -357,16 +357,6 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			return -1;
 		}
 
-		opt = 0;
-		if (setsockopt(sockfd, IPPROTO_TCP, TCP_QUICKACK, (char *) &opt, sizeof(opt)) < 0) {
-			ASPRINTF(&log, "cannot set socket options TCP_QUICKACK: %d", sockfd);
-			PRINT_ERR_FREE(log);
-			freeaddrinfo(serv_info);
-			free(ip_address_str);
-			close(sockfd);
-			return -1;
-		}
-
 		sendbuff = test->send_buf_size;
 		if (setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (char *) &sendbuff, sizeof(sendbuff)) < 0) {
 			ASPRINTF(&log, "cannot set socket send buffer size to: %d", sendbuff);
@@ -439,7 +429,6 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 int lagscope_server_select(struct lagscope_test_server *server)
 {
 	int err_code = NO_ERR;
-	int opt = 0;
 	char *log = NULL;
 	struct lagscope_test *test = server->test;
 	bool verbose_log = test->verbose;
@@ -488,8 +477,6 @@ int lagscope_server_select(struct lagscope_test_server *server)
 			/* then, we got one fd to handle */
 			/* a NEW connection coming */
 
-			/* need to reset TCP_QUICKACK every time */
-			setsockopt(current_fd, IPPROTO_TCP, TCP_QUICKACK, (char *) &opt, sizeof(opt));
 			if (current_fd == server->listener) {
  				/* handle new connections */
 				peer_addr_size = sizeof(peer_addr);
