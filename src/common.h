@@ -45,8 +45,9 @@
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
-// Todo: Try to remove this pragma
-#pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
+// Todo: Fix these warnings instead of suppress
+#pragma warning(disable : 4244) // Possible data loss due to conversion
+#pragma warning(disable : 4996) // Unsecure function in use
 
 #endif // _WIN32
 
