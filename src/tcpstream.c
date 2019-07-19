@@ -11,7 +11,7 @@
 /************************************************************/
 int n_read(int fd, char *buffer, size_t total)
 {
-	register ssize_t rtn;
+	register int rtn;
 	register size_t left = total;
 
 	while (left > 0) {
@@ -34,7 +34,7 @@ int n_read(int fd, char *buffer, size_t total)
 
 int n_write(int fd, const char *buffer, size_t total)
 {
-	register ssize_t rtn;
+	register int rtn;
 	register size_t left = total;
 
 	while (left > 0) {
