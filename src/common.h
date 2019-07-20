@@ -30,11 +30,27 @@
 #include <netinet/tcp.h>
 #endif
 
+#ifdef _WIN32
+#define INIT_SOCKFD_VAR() WSADATA wsaData; SOCKET sockfd = INVALID_SOCKET; WSAStartup(MAKEWORD(2,2), &wsaData)
+#define CLOSE(s) closesocket(s)
+#define WSACLEAN() WSACleanup()
+#define SLEEP(t) Sleep(t*1000)
+#else
+#define INIT_SOCKFD_VAR() int sockfd = 0
+#define CLOSE(s) close(s)
+#define WSACLEAN() (void)0
+#define SLEEP(t) sleep(t)
+#endif
+
 // Windows specific
 #ifdef _WIN32
+
+#undef UNICODE
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
