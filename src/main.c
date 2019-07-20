@@ -125,7 +125,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			(*(struct sockaddr_in6*)&local_addr).sin6_port = 0;
 		}
 
-		if ((i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) < 0) {
+		if ((i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) != 0) {
 			ASPRINTF(&log, "failed to bind socket: %d to a local ephemeral port. errno = %d", sockfd, errno);
 			PRINT_ERR_FREE(log);
 		}
@@ -384,7 +384,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			return -1;
 		}
 */
-		if ((i = bind(sockfd, p->ai_addr, p->ai_addrlen)) < 0) {
+		if ((i = bind(sockfd, p->ai_addr, p->ai_addrlen)) != 0) {
 			ASPRINTF(&log, "failed to bind the socket to local address: %s on socket: %d. errcode = %d",
 			ip_address_str = retrive_ip_address_str((struct sockaddr_storage *)p->ai_addr, ip_address_str, ip_address_max_size), sockfd, i);
 
