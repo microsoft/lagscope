@@ -1,6 +1,6 @@
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#ifndef COMMON_H
+#define COMMON_H
 
 // C standard library header files
 #include <stdio.h>
@@ -28,4 +28,4 @@
 #include <netdb.h>
 #include <netinet/tcp.h>
 
-#endif // INCLUDES_H
+#endif // COMMON_H
