@@ -7,8 +7,6 @@
 #ifndef TCPSTREAM_H
 #define TCPSTREAM_H
 
-#define _GNU_SOURCE
-
 #include "common.h"
 #include "const.h"
 

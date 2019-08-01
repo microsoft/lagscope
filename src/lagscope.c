@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 #include "lagscope.h"
+#include "const.h"
 
 struct lagscope_test *new_lagscope_test()
 {

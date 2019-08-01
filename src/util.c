@@ -5,34 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 #include "util.h"
-
-#ifdef _WIN32
-static int vasprintf(char **strp, const char *format, va_list ap)
-{
-	int len = _vscprintf(format, ap);
-	if (len == -1)
-		return -1;
-	char *str = (char*)malloc((size_t) len + 1);
-	if (!str)
-		return -1;
-	int rv = vsnprintf(str, len + 1, format, ap);
-	if (rv == -1) {
-		free(str);
-		return -1;
-	}
-	*strp = str;
-	return rv;
-}
-
-int asprintf(char **strp, const char *format, ...)
-{
-	va_list ap;
-	va_start(ap, format);
-	int rv = vasprintf(strp, format, ap);
-	va_end(ap);
-	return rv;
-}
-#endif
+#include "logger.h"
 
 void print_flags(struct lagscope_test *test)
 {
@@ -221,32 +194,6 @@ int verify_args(struct lagscope_test *test)
 
 	return NO_ERR;
 }
-
-#ifdef _WIN32
-static char* optarg = NULL;
-static int optind = 1;
-
-static int getopt(int argc, char *const argv[], const char *optstr)
-{
-	if ((optind >= argc) || (argv[optind][0] != '-') || (argv[optind][0] == 0))
-		return -1;
-
-	int opt = argv[optind][1];
-	const char *p = strchr(optstr, opt);
-
-	if (p == NULL)
-		return '?';
-
-	if (p[1] == ':') {
-		optarg = &argv[optind][2];
-		if (optarg[0] == 0)
-			optarg = NULL;
-	}
-
-	optind++;
-	return opt;
-}
-#endif
 
 int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 {

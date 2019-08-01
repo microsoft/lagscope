@@ -39,30 +39,9 @@ void sig_handler(int signo)
 	}
 }
 
-void timer_fired()
+void timer_fired(int signo)
 {
+	(void) signo; //Silence unused parameter compile warning
 	turn_off_light();
 }
 
-void run_test_timer(int duration)
-{
-#ifndef _WIN32
-	struct itimerval it_val;
-
-	it_val.it_value.tv_sec = duration;
-	it_val.it_value.tv_usec = 0;
-	it_val.it_interval.tv_sec = 0;
-	it_val.it_interval.tv_usec = 0;
-
-	if (signal(SIGALRM, timer_fired) == SIG_ERR) {
-		PRINT_ERR("unable to set test timer: signal SIGALRM failed");
-		exit(1);
-	}
-	if (setitimer(ITIMER_REAL, &it_val, NULL) == -1) {
-		PRINT_ERR("unable to set test timer: setitimer ITIMER_REAL failed");
-		exit(1);
-	}
-#else
-	SetTimer(NULL, 0, duration*1000, (TIMERPROC) timer_fired);
-#endif
-}

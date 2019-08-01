@@ -2,6 +2,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define _GNU_SOURCE
+
 // C standard library header files
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +15,7 @@
 #include <inttypes.h>
 #include <math.h>
 
-// Linux specific header files
+// Linux specific
 #ifndef _WIN32
 #include <unistd.h>
 #include <pthread.h>
@@ -35,11 +37,17 @@
 #define CLOSE(s) closesocket(s)
 #define WSACLEAN() WSACleanup()
 #define SLEEP(t) Sleep(t*1000)
+#define run_test_timer(duration) SetTimer(NULL, 0, duration*1000, (TIMERPROC) timer_fired)
+int gettimeofday(struct timeval * tp, struct timezone * tzp);
+int asprintf(char **strp, const char *format, ...);
+char* optarg;
+int getopt(int argc, char *const argv[], const char *optstr);
 #else
 #define INIT_SOCKFD_VAR() int sockfd = 0
 #define CLOSE(s) close(s)
 #define WSACLEAN() (void)0
 #define SLEEP(t) sleep(t)
+void run_test_timer(int duration);
 #endif
 
 // Windows specific

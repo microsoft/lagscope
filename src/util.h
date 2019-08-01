@@ -7,14 +7,9 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#define _GNU_SOURCE
-
 #include "common.h"
 #include "lagscope.h"
-
-#ifdef _WIN32
-int asprintf(char **strp, const char *format, ...);
-#endif
+#include "const.h"
 
 void print_flags(struct lagscope_test *test);
 void print_usage();

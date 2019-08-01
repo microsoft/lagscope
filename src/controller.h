@@ -7,8 +7,6 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#define _GNU_SOURCE
-
 #include "common.h"
 #include "logger.h"
 
@@ -17,8 +15,8 @@ void turn_off_light( void );
 void wait_light_on( void );
 void wait_light_off( void );
 int is_light_turned_on( void );
+void timer_fired(int signo);
 
 void sig_handler(int signo);
-void run_test_timer(int duration);
 
 #endif // CONTROLLER_H
