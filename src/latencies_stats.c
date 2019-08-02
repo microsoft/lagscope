@@ -1,4 +1,6 @@
 #include "util.h"
+#include "const.h"
+#include "logger.h"
 
 #define CSV_FILE_HEADER "Index, Latency(us)\n"
 

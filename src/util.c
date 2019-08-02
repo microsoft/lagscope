@@ -5,6 +5,7 @@
 // ----------------------------------------------------------------------------------
 
 #include "util.h"
+#include "logger.h"
 
 void print_flags(struct lagscope_test *test)
 {
@@ -196,35 +197,9 @@ int verify_args(struct lagscope_test *test)
 
 int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 {
-	static struct option longopts[] =
-	{
-		{"receiver", optional_argument, NULL, 'r'},
-		{"sender", optional_argument, NULL, 's'},
-		{"daemon", no_argument, NULL, 'D'},
-		{"cpu-affinity", required_argument, NULL, 'f'},
-		{"ipv6", no_argument, NULL, '6'},
-		{"udp", no_argument, NULL, 'u'},
-		{"server-port", required_argument, NULL, 'p'},
-		{"receiver-buffer", required_argument, NULL, 'b'},
-		{"send-buffer", required_argument, NULL, 'B'},
-		{"message_size", required_argument, NULL, 'z'},
-		{"duration", required_argument, NULL, 't'},
-		{"iteration", required_argument, NULL, 'n'},
-		{"interval", required_argument, NULL, 'i'},
-		{"hist", no_argument, NULL, 'H'},
-		{"hist-start", required_argument, NULL, 'a'},
-		{"hist-len", required_argument, NULL, 'l'},
-		{"hist-count", required_argument, NULL, 'c'},
-		{"perc", optional_argument, NULL, 'P'},
-		{"raw_dump", optional_argument, NULL, 'R'},
-		{"verbose", no_argument, NULL, 'V'},
-		{"help", no_argument, NULL, 'h'},
-		{0, 0, 0, 0}
-	};
-
 	int flag;
 
-	while ((flag = getopt_long(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh", longopts, NULL)) != -1) {
+	while ((flag = getopt(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh")) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;

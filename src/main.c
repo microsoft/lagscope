@@ -4,7 +4,11 @@
 // Author: Shihua (Simon) Xiao, sixiao@microsoft.com
 // ----------------------------------------------------------------------------------
 
-#include "main.h"
+#include "common.h"
+#include "util.h"
+#include "logger.h"
+#include "tcpstream.h"
+#include "controller.h"
 
 static int n_write_read(int sockfd, char *buffer, int msg_actual_size)
 {
@@ -36,7 +40,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	char *log = 0;
 	bool verbose_log = false;
 	struct lagscope_test_runtime *test_runtime;
-	int sockfd = 0; //socket id
 	int sendbuff, recvbuff = 0;   //send buffer size
 	char *buffer; //send buffer
 	int msg_actual_size; //the buffer actual size = msg_size * sizeof(char)
@@ -64,13 +67,14 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 
 	int latencies_stats_err_check = 0;
 
+	INIT_SOCKFD_VAR();
+
 	verbose_log = test->verbose;
 	test_runtime = new_test_runtime(test);
 
 	ip_address_max_size = (test->domain == AF_INET? INET_ADDRSTRLEN : INET6_ADDRSTRLEN);
 	if ((ip_address_str = (char *)malloc(ip_address_max_size)) == (char *)NULL) {
 		PRINT_ERR("cannot allocate memory for ip address string");
-		freeaddrinfo(serv_info);
 		return 0;
 	}
 
@@ -82,6 +86,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	if (getaddrinfo(test->bind_address, port_str, &hints, &serv_info) != 0) {
 		PRINT_ERR("cannot get address info for receiver");
 		free(ip_address_str);
+		WSACLEAN();
 		return 0;
 	}
 	free(port_str);
@@ -93,6 +98,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			PRINT_ERR("cannot create socket ednpoint");
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
+			WSACLEAN();
 			return 0;
 		}
 		sendbuff = test->send_buf_size;
@@ -101,6 +107,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
+			WSACLEAN();
 			return 0;
 		}
 		recvbuff = test->recv_buf_size;
@@ -109,6 +116,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
+			WSACLEAN();
 			return 0;
 		}
 		local_addr_size = sizeof(local_addr);
@@ -126,7 +134,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			(*(struct sockaddr_in6*)&local_addr).sin6_port = 0;
 		}
 
-		if ((i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) < 0) {
+		if ((i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) != 0) {
 			ASPRINTF(&log, "failed to bind socket: %d to a local ephemeral port. errno = %d", sockfd, errno);
 			PRINT_ERR_FREE(log);
 		}
@@ -144,7 +152,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			}
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
-			close(sockfd);
+			CLOSE(sockfd);
+			WSACLEAN();
 			return 0;
 		}
 		else {
@@ -170,7 +179,8 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	msg_actual_size = test->msg_size * sizeof(char);
 	if ((buffer = (char *)malloc(msg_actual_size)) == (char *)NULL) {
 		PRINT_ERR("cannot allocate memory for send message");
-		close(sockfd);
+		CLOSE(sockfd);
+		WSACLEAN();
 		return 0;
 	}
 	memset(buffer, 'A', msg_actual_size);
@@ -241,9 +251,9 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			report_progress(test_runtime);
 
 		if (test->interval !=0)
-			sleep(test->interval); //sleep for ping interval, for example, 1 second
+			SLEEP(test->interval); //sleep for ping interval, for example, 1 second
 	}
-	//sleep(60);
+	//SLEEP(60);
 finished:
 	PRINT_INFO("TEST COMPLETED.");
 
@@ -299,7 +309,8 @@ finished:
 	free(ip_address_str);
 	free(buffer);
 	latencies_stats_cleanup();
-	close(sockfd);
+	CLOSE(sockfd);
+	WSACLEAN();
 	return n_pings;
 }
 
@@ -313,7 +324,6 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	struct lagscope_test *test = server->test;
 	bool verbose_log = test->verbose;
 	int opt = 1;
-	int sockfd = 0; //socket file descriptor
 	int sendbuff, recvbuff = 0; //receive buffer size
 	char *ip_address_str; //used to get local ip address
 	int ip_address_max_size;  //used to get local ip address
@@ -322,6 +332,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 
 	int i = 0; //just for debug purpose
 
+	INIT_SOCKFD_VAR();
+
 	/* get receiver/itself address */
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = test->domain;
@@ -329,6 +341,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	ASPRINTF(&port_str, "%d", test->server_port);
 	if (getaddrinfo(test->bind_address, port_str, &hints, &serv_info) != 0) {
 		PRINT_ERR("cannot get address info for receiver");
+		WSACLEAN();
 		return -1;
 	}
 	free(port_str);
@@ -337,6 +350,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	if ((ip_address_str = (char *)malloc(ip_address_max_size)) == (char *)NULL) {
 		PRINT_ERR("cannot allocate memory for ip address string");
 		freeaddrinfo(serv_info);
+		WSACLEAN();
 		return -1;
 	}
 
@@ -346,6 +360,7 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			PRINT_ERR("cannot create socket ednpoint");
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
+			WSACLEAN();
 			return -1;
 		}
 
@@ -354,17 +369,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
-			close(sockfd);
-			return -1;
-		}
-
-		opt = 0;
-		if (setsockopt(sockfd, IPPROTO_TCP, TCP_QUICKACK, (char *) &opt, sizeof(opt)) < 0) {
-			ASPRINTF(&log, "cannot set socket options TCP_QUICKACK: %d", sockfd);
-			PRINT_ERR_FREE(log);
-			freeaddrinfo(serv_info);
-			free(ip_address_str);
-			close(sockfd);
+			CLOSE(sockfd);
+			WSACLEAN();
 			return -1;
 		}
 
@@ -374,7 +380,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
-			close(sockfd);
+			CLOSE(sockfd);
+			WSACLEAN();
 			return -1;
 		}
 		recvbuff = test->recv_buf_size;
@@ -383,7 +390,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
-			close(sockfd);
+			CLOSE(sockfd);
+			WSACLEAN();
 			return -1;
 		}
 /*		if (set_socket_non_blocking(sockfd) == -1) {
@@ -391,11 +399,12 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 			PRINT_ERR_FREE(log);
 			freeaddrinfo(serv_info);
 			free(ip_address_str);
-			close(sockfd);
+			CLOSE(sockfd);
+			WSACLEAN();
 			return -1;
 		}
 */
-		if ((i = bind(sockfd, p->ai_addr, p->ai_addrlen)) < 0) {
+		if ((i = bind(sockfd, p->ai_addr, p->ai_addrlen)) != 0) {
 			ASPRINTF(&log, "failed to bind the socket to local address: %s on socket: %d. errcode = %d",
 			ip_address_str = retrive_ip_address_str((struct sockaddr_storage *)p->ai_addr, ip_address_str, ip_address_max_size), sockfd, i);
 
@@ -413,7 +422,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	if (p == NULL) {
 		ASPRINTF(&log, "cannot bind the socket on address: %s", test->bind_address);
 		PRINT_ERR_FREE(log);
-		close(sockfd);
+		CLOSE(sockfd);
+		WSACLEAN();
 		return -1;
 	}
 
@@ -421,7 +431,8 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 	if (listen(server->listener, MAX_CONNECTIONS_PER_THREAD) < 0) {
 		ASPRINTF(&log, "failed to listen on address: %s: %d", test->bind_address, test->server_port);
 		PRINT_ERR_FREE(log);
-		close(server->listener);
+		CLOSE(server->listener);
+		WSACLEAN();
 		return -1;
 	}
 
@@ -440,7 +451,6 @@ int lagscope_server_listen(struct lagscope_test_server *server)
 int lagscope_server_select(struct lagscope_test_server *server)
 {
 	int err_code = NO_ERR;
-	int opt = 0;
 	char *log = NULL;
 	struct lagscope_test *test = server->test;
 	bool verbose_log = test->verbose;
@@ -489,8 +499,6 @@ int lagscope_server_select(struct lagscope_test_server *server)
 			/* then, we got one fd to handle */
 			/* a NEW connection coming */
 
-			/* need to reset TCP_QUICKACK every time */
-			setsockopt(current_fd, IPPROTO_TCP, TCP_QUICKACK, (char *) &opt, sizeof(opt));
 			if (current_fd == server->listener) {
  				/* handle new connections */
 				peer_addr_size = sizeof(peer_addr);
@@ -533,7 +541,7 @@ int lagscope_server_select(struct lagscope_test_server *server)
 			}
 			/* handle data from an EXISTING client */
 			else {
-				bzero(buffer, msg_actual_size);
+				memset(buffer, 0, msg_actual_size);
 
 				/* got error or connection closed by client */
 				if ((nbytes = n_read(current_fd, buffer, msg_actual_size)) <= 0) {
@@ -547,7 +555,7 @@ int lagscope_server_select(struct lagscope_test_server *server)
 						err_code = ERROR_NETWORK_READ;
 						/* need to continue test and check other socket, so don't end the test */
 					}
-					close(current_fd);
+					CLOSE(current_fd);
 					FD_CLR(current_fd, &server->read_set); /* remove from master set when finished */
 				}
 				/* report ping request eceived */
@@ -567,7 +575,8 @@ int lagscope_server_select(struct lagscope_test_server *server)
 
 	free(buffer);
 	free(ip_address_str);
-	close(server->listener);
+	CLOSE(server->listener);
+	WSACLEAN();
 	return err_code;
 }
 
@@ -594,7 +603,6 @@ long run_lagscope_receiver(struct lagscope_test_server *server)
 int main(int argc, char **argv)
 {
 	int err_code = NO_ERR;
-	cpu_set_t cpuset;
 	struct lagscope_test *test;
 	struct lagscope_test_server *server;
 	struct lagscope_test_client *client;
@@ -633,17 +641,28 @@ int main(int argc, char **argv)
 	turn_off_light();
 
 	if (test->cpu_affinity != -1) {
+#ifndef _WIN32
+		cpu_set_t cpuset;
 		CPU_ZERO(&cpuset);
 		CPU_SET(test->cpu_affinity, &cpuset);
 		PRINT_INFO("main: set cpu affinity");
 		if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) != 0)
 			PRINT_ERR("main: cannot set cpu affinity");
+#else
+		test->cpu_affinity = -1;
+		PRINT_INFO("main: set cpu affinity: Lagscope currently do not support this option in Windows ");
+#endif
 	}
 
 	if (test->daemon) {
+#ifndef _WIN32
 		PRINT_INFO("main: run this tool in the background");
 		if (daemon(0, 0) != 0)
 			PRINT_ERR("main: cannot run this tool in the background");
+#else
+		test->daemon = 0;
+		PRINT_INFO("main: run in background: Lagscope currently do not support this option in Windows ");
+#endif
 	}
 
 	if (test->client_role == true) {

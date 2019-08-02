@@ -7,10 +7,9 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#define _GNU_SOURCE
-
 #include "common.h"
 #include "lagscope.h"
+#include "const.h"
 
 void print_flags(struct lagscope_test *test);
 void print_usage();

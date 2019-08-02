@@ -7,11 +7,7 @@
 #ifndef LAGSCOPE_H
 #define LAGSCOPE_H
 
-#define _GNU_SOURCE
-
 #include "common.h"
-#include "const.h"
-#include "logger.h"
 
 /* maintain the test parameters accepted from user */
 struct lagscope_test
