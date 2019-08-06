@@ -23,7 +23,7 @@ A Linux tool to measure the network transport layer latency.
 
 On Linux, install cmake & gcc.
 
-On Windows, install cmake by select 'C++ build tools' if install from Build Tools for Visual Studio OR by select 'Desktop development with C++' if install from Visual Studio.
+On Windows, install "C++ build tools", it is an option in "Build Tools for Visual Studio". C++ build tools contains necessary compiler and cmake.
 
 Run the following commands in terminal shell on Linux and in Developer Command Prompt on Windows.
 
@@ -35,9 +35,9 @@ cmake ..
 cmake --build .
 cmake --build . --target install
 ```
-On Linux, lagscope is built into /usr/local/bin/lagscope.
+On Linux, lagscope is installed to /usr/local/bin/lagscope.
 
-On Windows, add 'C:\Program Files (x86)\Lagscope\bin' into PATH environment variables, restart computer, then can run lagscope without specify full path.
+On Windows, lagscope is installed to "C:\Program Files (x86)\Lagscope\bin\lagscope".
 
 ### Usage
 
@@ -96,7 +96,7 @@ Interval(usec)   Frequency
      58          8980
      59          8812
      60          8418
-     ...	 
+     ...
     100          519
     101          472
     102          849
