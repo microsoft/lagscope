@@ -2,6 +2,13 @@
 #include "controller.h"
 
 #ifndef _WIN32
+long long time_in_usec(void)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (1000000 * tv.tv_sec + tv.tv_usec);
+}
+
 void run_test_timer(int duration)
 {
 	struct itimerval it_val;

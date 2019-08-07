@@ -53,17 +53,14 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	char *port_str; //to get remote peer's port number for getaddrinfo()
 	struct addrinfo hints, *serv_info, *p; //to get remote peer's sockaddr for connect()
 
-	struct timeval now;
-	struct timeval send_time;
-	struct timeval recv_time;
-	double latency = 0;
+	long long send_time, recv_time, latency = 0;
 	int i = 0;
 
 	/* for ping statistics */
 	unsigned long n_pings = 0; //number of pings
-	double max_latency = 0;
-	double min_latency = 60000; //60 seconds
-	double sum_latency = 0;
+	long long max_latency = 0;
+	long long min_latency = 60000; //60 seconds
+	long long sum_latency = 0;
 
 	int latencies_stats_err_check = 0;
 
@@ -197,8 +194,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	if (test->test_mode == TIME_DURATION)
 		run_test_timer(test->duration);
 
-	gettimeofday(&now, NULL);
-	test_runtime->start_time = now;
+	test_runtime->start_time = time_in_usec();
 
 	/* Interop with latte.exe:
 	 * First send control byte */
@@ -213,20 +209,18 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		buffer[1] = (n_pings >> 8);
 		buffer[0] = (n_pings /*>> 0*/);
 
-		gettimeofday(&now, NULL);
-		send_time = now;
+		send_time = time_in_usec();
 
 		if ((n = n_write_read(sockfd, buffer, msg_actual_size)) < 0)
 			goto finished;
 
-		gettimeofday(&now, NULL);
-		recv_time = now;
+		recv_time = time_in_usec();
 
-		latency = get_time_diff(&recv_time, &send_time) * 1000 * 1000;
+		latency = recv_time - send_time;
 
 		push(latency);		// Push latency onto linked list
 
-		ASPRINTF(&log, "Reply from %s: bytes=%d time=%.3fus",
+		ASPRINTF(&log, "Reply from %s: bytes=%d time=%lldus",
 				ip_address_str,
 				n,
 				latency);
@@ -263,7 +257,7 @@ finished:
 	ASPRINTF(&log, "\t  Number of successful Pings: %ld", n_pings);
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
-		ASPRINTF(&log, "\t  Minimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
+		ASPRINTF(&log, "\t  Minimum = %lldus, Maximum = %lldus, Average = %lldus",
 			min_latency,
 			max_latency,
 			sum_latency/n_pings);

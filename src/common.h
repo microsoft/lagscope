@@ -38,7 +38,6 @@
 #define WSACLEAN() WSACleanup()
 #define SLEEP(t) Sleep(t*1000)
 #define run_test_timer(duration) SetTimer(NULL, 0, duration*1000, (TIMERPROC) timer_fired)
-int gettimeofday(struct timeval * tp, struct timezone * tzp);
 int asprintf(char **strp, const char *format, ...);
 char* optarg;
 int getopt(int argc, char *const argv[], const char *optstr);

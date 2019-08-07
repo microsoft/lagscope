@@ -26,22 +26,16 @@ int getopt(int argc, char *const argv[], const char *optstr)
 	return opt;
 }
 
-int gettimeofday(struct timeval * tp, struct timezone * tzp)
+long long time_in_usec(void)
 {
-	static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+	LARGE_INTEGER Time, Frequency;
 
-	SYSTEMTIME  system_time;
-	FILETIME    file_time;
-	uint64_t    time;
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&Time);
 
-	GetSystemTime( &system_time );
-	SystemTimeToFileTime( &system_time, &file_time );
-	time =  ((uint64_t)file_time.dwLowDateTime );
-	time += ((uint64_t)file_time.dwHighDateTime) << 32;
-
-	tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
-	tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
-        return 0;
+	Time.QuadPart *= 1000000;
+	Time.QuadPart /= Frequency.QuadPart;
+	return (Time.QuadPart);
 }
 
 static int vasprintf(char **strp, const char *format, va_list ap)
