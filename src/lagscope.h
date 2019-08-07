@@ -64,8 +64,8 @@ struct lagscope_test_client{
 
 struct lagscope_test_runtime{
 	struct lagscope_test *test;
-	struct timeval start_time;
-	struct timeval current_time;
+	long long start_time;
+	long long current_time;
 	unsigned long  ping_elapsed;
 
 	unsigned long lazy_prog_report_factor;
