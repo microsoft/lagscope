@@ -7,8 +7,11 @@ int getopt(int argc, char *const argv[], const char *optstr)
 {
 	static int optind = 1;
 
-	if ((optind >= argc) || (argv[optind][0] != '-') || (argv[optind][0] == 0))
+	if ((optind >= argc) || (argv[optind][0] == 0))
 		return -1;
+
+	if (argv[optind][0] != '-')
+		return '?';
 
 	int opt = argv[optind][1];
 	const char *p = strchr(optstr, opt);
@@ -16,10 +19,17 @@ int getopt(int argc, char *const argv[], const char *optstr)
 	if (p == NULL)
 		return '?';
 
+	optarg = &argv[optind][2];
+
 	if (p[1] == ':') {
-		optarg = &argv[optind][2];
-		if (optarg[0] == 0)
-			optarg = NULL;
+		if (p[2] != ':') {
+			if (optarg[0] == 0)
+				return '?';
+		}
+		if (p[2] == ':') {
+			if (optarg[0] == 0)
+				optarg = NULL;
+		}
 	}
 
 	optind++;

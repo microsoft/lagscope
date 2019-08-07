@@ -96,14 +96,16 @@ void print_usage()
 	printf("\treceiver:\n");
 	printf("\t1) ./lagscope -r\n");
 	printf("\t2) ./lagscope -r192.168.1.1\n");
-	printf("\t3) ./lagscope -r -D -f0 -6 -p 6789 -V\n");
+	printf("\t3) ./lagscope -r -D -f0 -6 -p6789 -V\n");
 	printf("\tsender:\n");
 	printf("\t1) ./lagscope -s192.168.1.1\n");
-	printf("\t2) ./lagscope -s192.168.1.1 -t 600 -i 1 -V\n");
-	printf("\t3) ./lagscope -s192.168.1.1 -n 1000 -6 -i 2 -V\n");
-	printf("\t1) ./lagscope -s192.168.1.1 -H -a 10 -l 1 -c 98\n");
+	printf("\t2) ./lagscope -s192.168.1.1 -t600 -i1 -V\n");
+	printf("\t3) ./lagscope -s192.168.1.1 -n1000 -6 -i2 -V\n");
+	printf("\t1) ./lagscope -s192.168.1.1 -H -a10 -l1 -c98\n");
 	printf("\t1) ./lagscope -s192.168.1.1 -Pfreq_table.json\n");
 	printf("\t1) ./lagscope -s192.168.1.1 -Rraw_latency_values.csv\n");
+
+	printf("\nNote: There should be no space between option and its value\n");
 }
 
 void print_version()
