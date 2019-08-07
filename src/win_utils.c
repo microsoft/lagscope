@@ -19,7 +19,7 @@ int getopt(int argc, char *const argv[], const char *optstr)
 	if (p[1] == ':') {
 		optarg = &argv[optind][2];
 		if (optarg[0] == 0)
-			optarg = NULL;
+			return '?';
 	}
 
 	optind++;
