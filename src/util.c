@@ -201,22 +201,58 @@ int verify_args(struct lagscope_test *test)
 	return NO_ERR;
 }
 
+// This is a custom getopt common for both Windows & Linux
+// This don't accept space between option and its value
+char* optarg2 = NULL;
+int getopt2(int argc, char *const argv[], const char *optstr)
+{
+	static int optind = 1;
+
+	if ((optind >= argc) || (argv[optind][0] == 0))
+		return -1;
+
+	if (argv[optind][0] != '-')
+		return '?';
+
+	int opt = argv[optind][1];
+	const char *p = strchr(optstr, opt);
+
+	if (p == NULL)
+		return '?';
+
+	optarg2 = &argv[optind][2];
+
+	if (p[1] == ':') {
+		if (p[2] != ':') {
+			if (optarg2[0] == 0)
+				return '?';
+		}
+		if (p[2] == ':') {
+			if (optarg2[0] == 0)
+				optarg2 = NULL;
+		}
+	}
+
+	optind++;
+	return opt;
+}
+
 int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 {
 	int flag;
 
-	while ((flag = getopt(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh")) != -1) {
+	while ((flag = getopt2(argc, argv, "r::s::Df:6up:b:B:z:t:n:i:R::P::Ha:l:c:Vh")) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
-			if (optarg)
-				test->bind_address = optarg;
+			if (optarg2)
+				test->bind_address = optarg2;
 			break;
 
 		case 's':
 			test->client_role = true;
-			if (optarg)
-				test->bind_address = optarg;
+			if (optarg2)
+				test->bind_address = optarg2;
 			break;
 
 		case 'D':
@@ -224,7 +260,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			break;
 
 		case 'f':
-			test->cpu_affinity = atoi(optarg);
+			test->cpu_affinity = atoi(optarg2);
 			break;
 
 		case '6':
@@ -236,32 +272,32 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			break;
 
 		case 'p':
-			test->server_port = atoi(optarg);
+			test->server_port = atoi(optarg2);
 			break;
 
 		case 'b':
-			test->recv_buf_size = unit_atod(optarg);
+			test->recv_buf_size = unit_atod(optarg2);
 			break;
 
 		case 'B':
-			test->send_buf_size = unit_atod(optarg);
+			test->send_buf_size = unit_atod(optarg2);
 			break;
 
 		case 'z':
-			test->msg_size = atoi(optarg);
+			test->msg_size = atoi(optarg2);
 			break;
 
 		case 't':
-			test->duration = atoi(optarg);
+			test->duration = atoi(optarg2);
 			test->test_mode = TIME_DURATION;
 			break;
 
 		case 'n':
-			test->iteration = atoi(optarg);
+			test->iteration = atoi(optarg2);
 			break;
 
 		case 'i':
-			test->interval = atoi(optarg);
+			test->interval = atoi(optarg2);
 			break;
 
 		case 'H':
@@ -269,15 +305,15 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			break;
 
 		case 'a':
-			test->hist_start = atoi(optarg);
+			test->hist_start = atoi(optarg2);
 			break;
 
 		case 'l':
-			test->hist_len = atoi(optarg);
+			test->hist_len = atoi(optarg2);
 			break;
 
 		case 'c':
-			test->hist_count = atoi(optarg);
+			test->hist_count = atoi(optarg2);
 			break;
 
 		case 'V':
@@ -286,17 +322,17 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'P':
 			test->perc = true;
-			if(optarg)
+			if(optarg2)
 			{
 				test->freq_table_dump = true;
-				test->json_file_name = optarg;
+				test->json_file_name = optarg2;
 			}
 			break;
 
 		case 'R':
 			test->raw_dump = true;
-			if(optarg)
-				test->csv_file_name = optarg;
+			if(optarg2)
+				test->csv_file_name = optarg2;
 			break;
 
 		case 'h':
