@@ -158,6 +158,10 @@ int verify_args(struct lagscope_test *test)
 	}
 
 	if (test->client_role) {
+		if (0 == strcmp(test->bind_address, "0.0.0.0")) {
+			// This is needed due to behaviour if Win socket in client mode
+			test->bind_address = "127.0.0.1";
+		}
 		if (test->hist_start < 0) {
 			PRINT_ERR("histogram interval start value provided is invalid; use default value.");
 			test->hist_start = HIST_DEFAULT_START_AT;
