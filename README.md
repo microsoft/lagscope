@@ -63,7 +63,7 @@ On NODE1 (the receiver), run:
 
 On NODE2 (the sender), run:
 ```
-./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
+./lagscope -s192.168.4.1 -H -a10 -l1 -c98
 ```
 (Translation: Run lagscope as a sender, with default test settings; report histogram value with customized factors.)
 
@@ -71,7 +71,7 @@ On NODE2 (the sender), run:
 Example sender-side output from a given run:
 
 ```
-simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -H -a 10 -l 1 -c 98
+simonxiao@NODE2:~/lagscope/src# ./lagscope -s192.168.4.1 -H -a10 -l1 -c98
 lagscope 0.1.1
 ---------------------------------------------------------
 13:19:44 INFO: New connection: local:13948 [socket:3] --> 192.168.4.1:6001

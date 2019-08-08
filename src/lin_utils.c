@@ -2,6 +2,19 @@
 #include "controller.h"
 
 #ifndef _WIN32
+long long time_in_nanosec(void)
+{
+	long ns;
+	time_t sec;
+	struct timespec spec;
+
+	clock_gettime(CLOCK_REALTIME, &spec);
+	sec = spec.tv_sec;
+	ns = spec.tv_nsec;
+
+	return (sec * 1000000000L + ns);
+}
+
 void run_test_timer(int duration)
 {
 	struct itimerval it_val;

@@ -1,47 +1,14 @@
 #include "common.h"
 
 #ifdef _WIN32
-char* optarg = NULL;
-
-int getopt(int argc, char *const argv[], const char *optstr)
+long long time_in_nanosec(void)
 {
-	static int optind = 1;
+	LARGE_INTEGER Time, Frequency;
 
-	if ((optind >= argc) || (argv[optind][0] != '-') || (argv[optind][0] == 0))
-		return -1;
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&Time);
 
-	int opt = argv[optind][1];
-	const char *p = strchr(optstr, opt);
-
-	if (p == NULL)
-		return '?';
-
-	if (p[1] == ':') {
-		optarg = &argv[optind][2];
-		if (optarg[0] == 0)
-			optarg = NULL;
-	}
-
-	optind++;
-	return opt;
-}
-
-int gettimeofday(struct timeval * tp, struct timezone * tzp)
-{
-	static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
-
-	SYSTEMTIME  system_time;
-	FILETIME    file_time;
-	uint64_t    time;
-
-	GetSystemTime( &system_time );
-	SystemTimeToFileTime( &system_time, &file_time );
-	time =  ((uint64_t)file_time.dwLowDateTime );
-	time += ((uint64_t)file_time.dwHighDateTime) << 32;
-
-	tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
-	tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
-        return 0;
+	return (Time.QuadPart * 1000000000I64 / Frequency.QuadPart);
 }
 
 static int vasprintf(char **strp, const char *format, va_list ap)
