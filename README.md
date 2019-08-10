@@ -2,7 +2,7 @@
 
 ## Summary
 
-A Linux tool to measure the network transport layer latency.
+A Linux/Windows tool to measure the network transport layer latency.
 
 ## Features
 
@@ -12,9 +12,11 @@ A Linux tool to measure the network transport layer latency.
 
 * Support two test modes: test-duration mode and ping-iteration mode.
 
-* Support CPU affinity.
+* Support histogram reporting and percentile reporting.
 
-* Support running in background (daemon).
+* Support interop test with Windows latte.exe.
+
+* Support running natively on both Linux and Windows Operating Systems.
 
 
 ## Getting Started
@@ -238,11 +240,13 @@ INFO: Graph created in: freq_graph.png
 
 ## Related topics
 
-1. [NTTTCP-for-Linux](https://github.com/Microsoft/ntttcp-for-linux)
+1. [Latte -- The Windows tool for latency measurement](https://gallery.technet.microsoft.com/Latte-The-Windows-tool-for-ac33093b)
 
-2. [Microsoft Server & Cloud Blog](http://blogs.technet.com/b/server-cloud/)
+2. [NTTTCP-for-Linux](https://github.com/Microsoft/ntttcp-for-linux)
 
-3. [HyperV Linux Integrated Services Test](https://github.com/LIS/lis-test)
+3. [Microsoft Server & Cloud Blog](http://blogs.technet.com/b/server-cloud/)
+
+4. [HyperV Linux Integrated Services Test](https://github.com/LIS/lis-test)
 
 
 ## Terms of Use
