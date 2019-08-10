@@ -33,8 +33,8 @@ void print_flags(struct lagscope_test *test)
 		printf("%s:\t\t\t %s\n", "protocol", "UDP(*not supported yet*)");
 
 	printf("%s:\t\t\t %d\n", "server port", test->server_port);
-	printf("%s:\t %.2f\n", "socket receive buffer (bytes)", test->recv_buf_size);
-	printf("%s:\t %.2f\n", "socket send buffer (bytes)", test->send_buf_size);
+	printf("%s:\t %d\n", "socket rx buffer size (bytes)", test->recv_buf_size);
+	printf("%s:\t %d\n", "socket tx buffer size (bytes)", test->send_buf_size);
 	printf("%s:\t\t %d\n", "message size (bytes)", test->msg_size);
 
 	if (test->client_role) {
@@ -276,11 +276,11 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 			break;
 
 		case 'b':
-			test->recv_buf_size = unit_atod(optarg2);
+			test->recv_buf_size = atoi(optarg2);
 			break;
 
 		case 'B':
-			test->send_buf_size = unit_atod(optarg2);
+			test->send_buf_size = atoi(optarg2);
 			break;
 
 		case 'z':
@@ -353,39 +353,6 @@ void print_test_stats()
 {
 	PRINT_INFO("TBD");
 }
-
-const long KIBI = 1<<10;
-const long MEBI = 1<<20;
-const long GIBI = 1<<30;
-double unit_atod(const char *s)
-{
-	double n;
-	char suffix = '\0';
-
-	sscanf(s, "%lf%c", &n, &suffix);
-	switch (suffix) {
-	case 'g': case 'G':
-		n *= GIBI;
-		break;
-	case 'm': case 'M':
-		n *= MEBI;
-		break;
-	case 'k': case 'K':
-		n *= KIBI;
-		break;
-	default:
-		break;
-	}
-	return n;
-}
-
-const char *unit_bps[] =
-{
-	"bps",
-	"Kbps",
-	"Mbps",
-	"Gbps"
-};
 
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen)
 {
