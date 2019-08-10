@@ -53,14 +53,15 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	char *port_str; //to get remote peer's port number for getaddrinfo()
 	struct addrinfo hints, *serv_info, *p; //to get remote peer's sockaddr for connect()
 
-	long long send_time, recv_time, latency = 0;
+	long long send_time_ns, recv_time_ns = 0;
+	double latency_ms = 0.0;
 	int i = 0;
 
 	/* for ping statistics */
 	unsigned long n_pings = 0; //number of pings
-	long long max_latency = 0;
-	long long min_latency = 60000; //60 seconds
-	long long sum_latency = 0;
+	double max_latency_ms = 0.0;
+	double min_latency_ms = 60000000.0; //60 seconds = 60 micro-seconds * 1000 * 1000
+	double sum_latency_ms = 0.0;
 
 	int latencies_stats_err_check = 0;
 
@@ -209,33 +210,33 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		buffer[1] = (n_pings >> 8);
 		buffer[0] = (n_pings /*>> 0*/);
 
-		send_time = time_in_nanosec();
+		send_time_ns = time_in_nanosec();
 
 		if ((n = n_write_read(sockfd, buffer, msg_actual_size)) < 0)
 			goto finished;
 
-		recv_time = time_in_nanosec();
+		recv_time_ns = time_in_nanosec();
 
-		latency = recv_time - send_time;
+		latency_ms = (double) ((recv_time_ns - send_time_ns)/1000.0);
 
-		push(latency);		// Push latency onto linked list
+		push(latency_ms);		// Push latency onto linked list
 
 		ASPRINTF(&log, "Reply from %s: bytes=%d time=%.3fus",
 				ip_address_str,
 				n,
-				(double) (latency/1000.0));
+				latency_ms);
 		PRINT_DBG_FREE(log);
 
 		n_pings++;
-		test_runtime->current_time = recv_time;
+		test_runtime->current_time = recv_time_ns;
 		test_runtime->ping_elapsed = n_pings;
 
 		/* calculate max. avg. min. */
-		sum_latency += latency;
-		if (max_latency < latency)
-			max_latency = latency;
-		if (min_latency > latency)
-			min_latency = latency;
+		sum_latency_ms += latency_ms;
+		if (max_latency_ms < latency_ms)
+			max_latency_ms = latency_ms;
+		if (min_latency_ms > latency_ms)
+			min_latency_ms = latency_ms;
 
 		if (test->test_mode == PING_ITERATION)
 			if (n_pings >= test->iteration)
@@ -258,9 +259,9 @@ finished:
 	PRINT_INFO_FREE(log);
 	if (n_pings > 0) {
 		ASPRINTF(&log, "\t  Minimum = %.3fus, Maximum = %.3fus, Average = %.3fus",
-			(double) (min_latency/1000.0),
-			(double) (max_latency/1000.0),
-			(double) (sum_latency/1000.0) / n_pings);
+			min_latency_ms,
+			max_latency_ms,
+			sum_latency_ms / n_pings);
 		PRINT_INFO_FREE(log);
 	}
 
@@ -272,7 +273,7 @@ finished:
 	}
 
 	if (test->perc || test->hist) {
-		latencies_stats_err_check = process_latencies(max_latency);
+		latencies_stats_err_check = process_latencies(max_latency_ms);
 
 		if (latencies_stats_err_check == NO_ERR) {
 			/* function call to show percentiles */
@@ -280,15 +281,15 @@ finished:
 				if(test->freq_table_dump) {
 					ASPRINTF(&log, "Dumping latency frequency table into json file: %s", test->json_file_name);
 					PRINT_INFO_FREE(log);
-					create_freq_table_json((unsigned long) max_latency, test->json_file_name);
+					create_freq_table_json((unsigned long) max_latency_ms, test->json_file_name);
 				}
 
-				show_percentile(max_latency, n_pings);
+				show_percentile((unsigned long) max_latency_ms, n_pings);
 			}
 
 			/* function call to show histogram */
 			if(test->hist) {
-				show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency);
+				show_histogram(test->hist_start, test->hist_len, test->hist_count, (unsigned long) max_latency_ms);
 			}
 		} else if (latencies_stats_err_check == ERROR_MEMORY_ALLOC) {
 			PRINT_ERR("Memory allocation failed, aborting...");
