@@ -65,7 +65,7 @@ void print_usage()
 	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-B|-z|-t|-n|-i|-R|-P|-H|-a|-l|-c|-V|-h]\n\n");
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
-	printf("\t-D   Run as daemon\n");
+	printf("\t-D   Run as daemon (Linux only)\n");
 	printf("\t-f   Processor number to affinitize to (default: no affinity)\n");
 
 	printf("\t-6   IPv6 mode    [default: IPv4]\n");
