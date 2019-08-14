@@ -636,17 +636,10 @@ int main(int argc, char **argv)
 	turn_off_light();
 
 	if (test->cpu_affinity != -1) {
-#ifndef _WIN32
-		cpu_set_t cpuset;
-		CPU_ZERO(&cpuset);
-		CPU_SET(test->cpu_affinity, &cpuset);
-		PRINT_INFO("main: set cpu affinity");
-		if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) != 0)
-			PRINT_ERR("main: cannot set cpu affinity");
-#else
-		test->cpu_affinity = -1;
-		PRINT_INFO("main: set cpu affinity: Lagscope currently do not support this option in Windows ");
-#endif
+		if (!set_affinity(test->cpu_affinity)) {
+			PRINT_ERR("main: failed to set cpu affinity");
+			exit (-1);
+		}
 	}
 
 	if (test->daemon) {

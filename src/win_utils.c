@@ -37,4 +37,10 @@ int asprintf(char **strp, const char *format, ...)
 	return rv;
 }
 
+int set_affinity(int cpuid)
+{
+	if (0 == SetProcessAffinityMask(GetCurrentProcess(), 1 << cpuid))
+		return 0;
+	return 1;
+}
 #endif
