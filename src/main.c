@@ -205,10 +205,10 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	while (is_light_turned_on()) {
 		/* Interop with latte.exe:
 		 * latte needs iteration count in data */
-		buffer[3] = (n_pings >> 24);
-		buffer[2] = (n_pings >> 16);
-		buffer[1] = (n_pings >> 8);
-		buffer[0] = (n_pings /*>> 0*/);
+		buffer[3] = (char)(n_pings >> 24);
+		buffer[2] = (char)(n_pings >> 16);
+		buffer[1] = (char)(n_pings >> 8);
+		buffer[0] = (char)(n_pings /*>> 0*/);
 
 		send_time_ns = time_in_nanosec();
 

@@ -91,10 +91,8 @@ struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test)
 	/* calculate the lazy_prog_report_factor */
 	unsigned long total_pings = 1;
 	/*
-	 * For PING_ITERATION, we know the total number of pings will be executed;
-	 * For TIME_DURATION, we estimate the total number of pings:
-	 *   a) total test duration time, divided by
-	 *   b) interval between each pings, or 1 ms (0.001 sec) if the interval == 0.
+	 * For PING_ITERATION, we know the total number of pings to be executed.
+	 * For TIME_DURATION, we estimate the total number of pings.
 	 */
 	if (test->test_mode == PING_ITERATION) {
 		total_pings = test->iteration;
@@ -103,7 +101,7 @@ struct lagscope_test_runtime *new_test_runtime(struct lagscope_test *test)
 		if (test->interval !=0)
 			total_pings = test->duration / test->interval;
 		else
-			total_pings = test->duration / 0.001;
+			total_pings = test->duration * 1000;
 	}
 	/*
 	 * We report the percentage of test progress.

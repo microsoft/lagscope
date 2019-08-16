@@ -66,7 +66,6 @@ void run_test_timer(int duration);
 #pragma comment (lib, "AdvApi32.lib")
 
 // Todo: Fix these warnings instead of suppress
-#pragma warning(disable : 4244) // Possible data loss due to conversion
 #pragma warning(disable : 4996) // Unsecure function in use
 
 #endif // _WIN32
