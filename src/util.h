@@ -31,6 +31,7 @@ void latencies_stats_cleanup(void);
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen);
 
 long long time_in_nanosec(void);
+int set_affinity(int cpuid);
 
 static inline void report_progress(struct lagscope_test_runtime *test_runtime)
 {

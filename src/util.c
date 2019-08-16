@@ -17,7 +17,7 @@ void print_flags(struct lagscope_test *test)
 		printf("%s\n", "*** run as daemon");
 
 	if (test->cpu_affinity == -1)
-		printf("%s:\t\t\t %s\n", "cpu affinity", "*");
+		printf("%s:\t\t\t %s\n", "cpu affinity", "No");
 	else
 		printf("%s:\t\t\t %d\n", "cpu affinity", test->cpu_affinity);
 
@@ -66,7 +66,7 @@ void print_usage()
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
 	printf("\t-D   Run as daemon\n");
-	printf("\t-f   CPU affinity. *, or cpuid such as 0, 1, etc.\n");
+	printf("\t-f   Processor number to affinitize to (default: no affinity)\n");
 
 	printf("\t-6   IPv6 mode    [default: IPv4]\n");
 	//printf("\t-u   UDP mode    [default: TCP] NOT SUPPORTED YET\n");
