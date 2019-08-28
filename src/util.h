@@ -32,6 +32,7 @@ char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t m
 
 long long time_in_nanosec(void);
 int set_affinity(int cpuid);
+void run_test_timer(int duration);
 
 static inline void report_progress(struct lagscope_test_runtime *test_runtime)
 {

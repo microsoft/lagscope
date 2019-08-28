@@ -1,6 +1,23 @@
 #include "common.h"
+#include "controller.h"
 
 #ifdef _WIN32
+static int duration_ms;
+void timer_thread(void *parg)
+{
+	MSG Msg;
+	UINT TimerId = SetTimer(NULL, 0, duration_ms, (TIMERPROC)timer_fired);
+	while(GetMessage(&Msg, NULL, 0, 0))
+		DispatchMessage(&Msg);
+	_endthread();
+}
+
+void run_test_timer(int duration)
+{
+	duration_ms = 1000*duration;
+	_beginthread(timer_thread, 0, NULL);
+}
+
 long long time_in_nanosec(void)
 {
 	LARGE_INTEGER Time, Frequency;
