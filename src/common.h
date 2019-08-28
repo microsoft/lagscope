@@ -36,14 +36,12 @@
 #define CLOSE(s) closesocket(s)
 #define WSACLEAN() WSACleanup()
 #define SLEEP(t) Sleep(t*1000)
-#define run_test_timer(duration) SetTimer(NULL, 0, duration*1000, (TIMERPROC) timer_fired)
 int asprintf(char **strp, const char *format, ...);
 #else
 #define INIT_SOCKFD_VAR() int sockfd = 0
 #define CLOSE(s) close(s)
 #define WSACLEAN() (void)0
 #define SLEEP(t) sleep(t)
-void run_test_timer(int duration);
 #endif
 
 // Windows specific
@@ -59,6 +57,7 @@ void run_test_timer(int duration);
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <io.h>
+#include <process.h>
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
