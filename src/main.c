@@ -119,10 +119,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		}
 		local_addr_size = sizeof(local_addr);
 
-		/*
-		   2. bind this socket fd to a local random/ephemeral TCP port,
-		      so that the sender side will have randomized TCP ports.
-		*/
+		/* 2. Set sender port = 0 to get suitable port number from system */
 		if (test->domain == AF_INET) {
 			(*(struct sockaddr_in*)&local_addr).sin_family = AF_INET;
 			(*(struct sockaddr_in*)&local_addr).sin_port = 0;
@@ -130,11 +127,6 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		else {
 			(*(struct sockaddr_in6*)&local_addr).sin6_family = AF_INET6;
 			(*(struct sockaddr_in6*)&local_addr).sin6_port = 0;
-		}
-
-		if ((i = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) != 0) {
-			ASPRINTF(&log, "failed to bind socket: %d to a local ephemeral port. errno = %d", sockfd, errno);
-			PRINT_ERR_FREE(log);
 		}
 
 		/* 3. connect to receiver */
