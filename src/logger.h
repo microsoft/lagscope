@@ -37,6 +37,8 @@
 #define PRINT_DBG_FREE(y) { \
 	if (verbose_log) { \
 		PRINT_LOG_FREE ("DBG ", y) \
+	} else { \
+		free(y); \
 	} \
 }
 
