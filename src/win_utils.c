@@ -6,7 +6,7 @@ static int duration_ms;
 void timer_thread(void *parg)
 {
 	MSG Msg;
-	UINT TimerId = SetTimer(NULL, 0, duration_ms, (TIMERPROC)timer_fired);
+	UINT_PTR TimerId = SetTimer(NULL, 0, duration_ms, (TIMERPROC)timer_fired);
 	while(GetMessage(&Msg, NULL, 0, 0))
 		DispatchMessage(&Msg);
 	_endthread();
@@ -56,7 +56,7 @@ int asprintf(char **strp, const char *format, ...)
 
 int set_affinity(int cpuid)
 {
-	if (0 == SetProcessAffinityMask(GetCurrentProcess(), 1 << cpuid))
+	if (0 == SetProcessAffinityMask(GetCurrentProcess(), (UINT_PTR)1 << cpuid))
 		return 0;
 	return 1;
 }
