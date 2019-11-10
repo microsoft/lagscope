@@ -8,7 +8,7 @@
 #define CONST_H
 
 #define TOOL_NAME "lagscope"
-#define TOOL_VERSION "0.2.0"
+#define TOOL_VERSION "1.0.0"
 #define AUTHOR_NAME "Shihua (Simon) Xiao, sixiao@microsoft.com"
 
 #define TCP 				SOCK_STREAM
