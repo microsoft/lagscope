@@ -12,17 +12,17 @@
 /* maintain the test parameters accepted from user */
 struct lagscope_test
 {
-	bool    server_role;        /* '-s' for client */
-	bool    client_role;        /* '-r' for server */
-	char    *bind_address;      /* server address, following by '-s' or '-r' */
-	bool    daemon;             /* '-D' for daemon mode */
-	int     cpu_affinity;       /* '-f' for CPU affinity */
+	bool    server_role;         /* '-s' for client */
+	bool    client_role;         /* '-r' for server */
+	char    *bind_address;       /* server address, following by '-s' or '-r' */
+	bool    daemon;              /* '-D' for daemon mode */
+	int     cpu_affinity;        /* '-f' for CPU affinity */
 
 	int     domain;              /* default for AF_INET, or '-6' for AF_INET6 */
 	int     protocol;            /* default for SOCK_STREAM for TCP, or '-u' for SOCK_DGRAM for UDP (does not support UDP for now) */
 	unsigned int    server_port; /* '-p' for server listening base port */
-	int  recv_buf_size;       /* '-b' for receive buffer option */
-	int  send_buf_size;       /* '-B' for send buffer option */
+	int     recv_buf_size;       /* '-b' for receive buffer option if specified in receiver side */
+	int     send_buf_size;       /* '-b' for send buffer option if specified in sender side */
 
 	/* client-only parameters */
 	int     test_mode;           /* lagscope client will decide a test mode based on user input */
