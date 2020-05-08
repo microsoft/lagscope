@@ -33,6 +33,8 @@ void print_flags(struct lagscope_test *test)
 		printf("%s:\t\t\t %s\n", "protocol", "UDP(*not supported yet*)");
 
 	printf("%s:\t\t\t %d\n", "server port", test->server_port);
+	if (test->client_role && test->client_port > 0)
+		printf("%s:\t\t\t %d\n", "client port", test->client_port);
 
 	if (test->server_role)
 		printf("%s:\t %d\n", "receiver socket buffer (bytes)", test->recv_buf_size);
@@ -66,7 +68,7 @@ void print_flags(struct lagscope_test *test)
 void print_usage()
 {
 	printf("Author: %s\n", AUTHOR_NAME);
-	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-b|-z|-t|-n|-i|-R|-P|-H|-a|-l|-c|-V|-h]\n\n");
+	printf("lagscope: [-r|-s|-D|-f|-6|-u|-p|-o|-b|-z|-t|-n|-i|-R|-P|-H|-a|-l|-c|-V|-h]\n\n");
 	printf("\t-r   Run as a receiver\n");
 	printf("\t-s   Run as a sender\n");
 	printf("\t-D   Run as daemon (Linux only)\n");
@@ -74,7 +76,8 @@ void print_usage()
 
 	printf("\t-6   IPv6 mode    [default: IPv4]\n");
 	//printf("\t-u   UDP mode    [default: TCP] NOT SUPPORTED YET\n");
-	printf("\t-p   Port number, or starting port number    [default: %d]\n", DEFAULT_SERVER_PORT);
+	printf("\t-p   Server port number    [default: %d]\n", DEFAULT_RCV_PORT);
+	printf("\t-o   Client port number    [default: %d]\n", DEFAULT_SRC_PORT);
 	printf("\t-b   <buffer size in bytes>    [default: %d (receiver); %d (sender)]\n", DEFAULT_RECV_BUFFER_SIZE_BYTES, DEFAULT_SEND_BUFFER_SIZE_BYTES);
 	printf("\t-z   <message size>        [default: %d bytes]\n", DEFAULT_MESSAGE_SIZE_BYTES);
 
@@ -157,15 +160,20 @@ int verify_args(struct lagscope_test *test)
 	}
 
 	if (test->server_role) {
-		if (test->raw_dump) {
+		if (test->client_port > 0)
+			PRINT_ERR("ignore '-f' on receiver role");
+		if (test->raw_dump)
 			PRINT_ERR("dumping latencies into a file not supported on receiver side; ignored");
-		}
 	}
 
 	if (test->client_role) {
 		if (0 == strcmp(test->bind_address, "0.0.0.0")) {
 			// This is needed due to behaviour if Win socket in client mode
 			test->bind_address = "127.0.0.1";
+		}
+		if (test->client_port > 0 && test->client_port <= 1024) {
+			test->client_port = DEFAULT_SRC_PORT;
+			PRINT_ERR("source port is too small. use the default value");
 		}
 		if (test->hist_start < 0) {
 			PRINT_ERR("histogram interval start value provided is invalid; use default value.");
@@ -244,7 +252,7 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 {
 	int flag;
 
-	while ((flag = getopt2(argc, argv, "r::s::Df:6up:b:z:t:n:i:R::P::Ha:l:c:Vh")) != -1) {
+	while ((flag = getopt2(argc, argv, "r::s::Df:6up:o:b:z:t:n:i:R::P::Ha:l:c:Vh")) != -1) {
 		switch (flag) {
 		case 'r':
 			test->server_role = true;
@@ -276,6 +284,10 @@ int parse_arguments(struct lagscope_test *test, int argc, char **argv)
 
 		case 'p':
 			test->server_port = atoi(optarg2);
+			break;
+
+		case 'o':
+			test->client_port = atoi(optarg2);
 			break;
 
 		case 'b':

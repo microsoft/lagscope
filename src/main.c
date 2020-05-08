@@ -56,6 +56,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	long long send_time_ns, recv_time_ns = 0;
 	double latency_ms = 0.0;
 	int i = 0;
+	int ret = 0; //hold function return value
 
 	/* for ping statistics */
 	unsigned long n_pings = 0; //number of pings
@@ -117,16 +118,28 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 			WSACLEAN();
 			return 0;
 		}
-		local_addr_size = sizeof(local_addr);
 
 		/* 2. Set sender port = 0 to get suitable port number from system */
+		memset(&local_addr, 0, sizeof(local_addr));
 		if (test->domain == AF_INET) {
 			(*(struct sockaddr_in*)&local_addr).sin_family = AF_INET;
-			(*(struct sockaddr_in*)&local_addr).sin_port = 0;
+			(*(struct sockaddr_in*)&local_addr).sin_port = htons(test->client_port);
 		}
 		else {
 			(*(struct sockaddr_in6*)&local_addr).sin6_family = AF_INET6;
-			(*(struct sockaddr_in6*)&local_addr).sin6_port = 0;
+			(*(struct sockaddr_in6*)&local_addr).sin6_port = htons(test->client_port);
+		}
+
+		local_addr_size = sizeof(local_addr);
+		if (( ret = bind(sockfd, (struct sockaddr *)&local_addr, local_addr_size)) < 0 ) {
+			ASPRINTF(&log,
+				"failed to bind socket[%d] to a local port: [%s:%d]. errno = %d. Ignored",
+				sockfd,
+				test->domain == AF_INET ? inet_ntoa((*(struct sockaddr_in*)&local_addr).sin_addr)
+							: "::", //TODO - get the IPv6 addr string
+				test->client_port,
+				errno);
+			PRINT_INFO_FREE(log);
 		}
 
 		/* 3. connect to receiver */

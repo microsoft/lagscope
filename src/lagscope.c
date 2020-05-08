@@ -28,7 +28,8 @@ void default_lagscope_test(struct lagscope_test *test)
 
 	test->domain           = AF_INET; //ipv4
 	test->protocol         = TCP;
-	test->server_port      = DEFAULT_SERVER_PORT;
+	test->server_port      = DEFAULT_RCV_PORT;
+	test->client_port      = DEFAULT_SRC_PORT;
 	test->recv_buf_size    = DEFAULT_RECV_BUFFER_SIZE_BYTES; //64K
 	test->send_buf_size    = DEFAULT_SEND_BUFFER_SIZE_BYTES; //128K
 
