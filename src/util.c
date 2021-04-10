@@ -107,9 +107,9 @@ void print_usage()
 	printf("\t1) ./lagscope -s192.168.1.1\n");
 	printf("\t2) ./lagscope -s192.168.1.1 -t600 -i1 -V\n");
 	printf("\t3) ./lagscope -s192.168.1.1 -n1000 -6 -i2 -V\n");
-	printf("\t1) ./lagscope -s192.168.1.1 -H -a10 -l1 -c98\n");
-	printf("\t1) ./lagscope -s192.168.1.1 -Pfreq_table.json\n");
-	printf("\t1) ./lagscope -s192.168.1.1 -Rraw_latency_values.csv\n");
+	printf("\t4) ./lagscope -s192.168.1.1 -H -a10 -l1 -c98\n");
+	printf("\t5) ./lagscope -s192.168.1.1 -Pfreq_table.json\n");
+	printf("\t6) ./lagscope -s192.168.1.1 -Rraw_latency_values.csv\n");
 
 	printf("\nNote: There should be no space between option and its value\n");
 }
