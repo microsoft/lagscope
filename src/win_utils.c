@@ -18,14 +18,14 @@ void run_test_timer(int duration)
 	_beginthread(timer_thread, 0, NULL);
 }
 
-long long time_in_nanosec(void)
+double time_in_usec(void)
 {
 	LARGE_INTEGER Time, Frequency;
 
 	QueryPerformanceFrequency(&Frequency);
 	QueryPerformanceCounter(&Time);
 
-	return (Time.QuadPart * 1000000000I64 / Frequency.QuadPart);
+	return ((Time.QuadPart * 1000000)/Frequency.QuadPart);
 }
 
 static int vasprintf(char **strp, const char *format, va_list ap)

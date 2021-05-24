@@ -2,7 +2,7 @@
 #include "controller.h"
 
 #ifndef _WIN32
-long long time_in_nanosec(void)
+double time_in_usec(void)
 {
 	long ns;
 	time_t sec;
@@ -12,7 +12,7 @@ long long time_in_nanosec(void)
 	sec = spec.tv_sec;
 	ns = spec.tv_nsec;
 
-	return (sec * 1000000000L + ns);
+	return (sec * 1000000 + ns / 1000.0);
 }
 
 void run_test_timer(int duration)

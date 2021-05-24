@@ -53,7 +53,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	char *port_str; //to get remote peer's port number for getaddrinfo()
 	struct addrinfo hints, *serv_info, *p; //to get remote peer's sockaddr for connect()
 
-	long long send_time_ns, recv_time_ns = 0;
+	double send_time_us, recv_time_us = 0.0;
 	double latency_ms = 0.0;
 	int i = 0;
 	int ret = 0; //hold function return value
@@ -200,7 +200,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 	if (test->test_mode == TIME_DURATION)
 		run_test_timer(test->duration);
 
-	test_runtime->start_time = time_in_nanosec();
+	test_runtime->start_time = time_in_usec();
 
 	/* Interop with latte.exe:
 	 * First send control byte */
@@ -215,14 +215,14 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		buffer[1] = (char)(n_pings >> 8);
 		buffer[0] = (char)(n_pings /*>> 0*/);
 
-		send_time_ns = time_in_nanosec();
+		send_time_us = time_in_usec();
 
 		if ((n = n_write_read(sockfd, buffer, msg_actual_size)) < 0)
 			goto finished;
 
-		recv_time_ns = time_in_nanosec();
+		recv_time_us = time_in_usec();
 
-		latency_ms = (double) ((recv_time_ns - send_time_ns)/1000.0);
+		latency_ms = recv_time_us - send_time_us;
 
 		push(latency_ms);		// Push latency onto linked list
 
@@ -233,7 +233,7 @@ long run_lagscope_sender(struct lagscope_test_client *client)
 		PRINT_DBG_FREE(log);
 
 		n_pings++;
-		test_runtime->current_time = recv_time_ns;
+		test_runtime->current_time = recv_time_us;
 		test_runtime->ping_elapsed = n_pings;
 
 		/* calculate max. avg. min. */
