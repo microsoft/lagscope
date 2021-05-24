@@ -30,7 +30,7 @@ void latencies_stats_cleanup(void);
 
 char *retrive_ip_address_str(struct sockaddr_storage *ss, char *ip_str, size_t maxlen);
 
-long long time_in_nanosec(void);
+double time_in_usec(void);
 int set_affinity(int cpuid);
 void run_test_timer(int duration);
 
@@ -49,10 +49,10 @@ static inline void report_progress(struct lagscope_test_runtime *test_runtime)
 		test_runtime->ping_elapsed * 100 / test_runtime->test->iteration);
 	}
 	else {
-		long long time_elapsed = test_runtime->current_time - test_runtime->start_time;
-		printf("%s: %lld%% completed.\r",
+		double time_elapsed = test_runtime->current_time - test_runtime->start_time;
+		printf("%s: %.0f%% completed.\r",
 		test_runtime->test->bind_address,
-		time_elapsed / 10000000 / test_runtime->test->duration);
+		time_elapsed / 10000 / test_runtime->test->duration);
 	}
 	fflush(stdout);
 }
