@@ -59,10 +59,11 @@ int asprintf(char **strp, const char *format, ...);
 #include <io.h>
 #include <process.h>
 
-// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
+// Link with required libs
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
+#pragma comment (lib, "User32.lib")
 
 // Todo: Fix these warnings instead of suppress
 #pragma warning(disable : 4996) // Unsecure function in use
