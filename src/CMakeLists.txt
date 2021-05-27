@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 project (Lagscope C)
 file(GLOB CSources *.c)
 add_executable(lagscope ${CSources})
