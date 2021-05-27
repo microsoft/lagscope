@@ -28,7 +28,7 @@ goto :usage
 	mkdir build
 	cd build
 	cmake ../src
-	cmake --build .
+	cmake --build . --config Release
 	goto :end
 
 :install
