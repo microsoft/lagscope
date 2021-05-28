@@ -160,8 +160,6 @@ int verify_args(struct lagscope_test *test)
 	}
 
 	if (test->server_role) {
-		if (test->client_port > 0)
-			PRINT_ERR("ignore '-f' on receiver role");
 		if (test->raw_dump)
 			PRINT_ERR("dumping latencies into a file not supported on receiver side; ignored");
 	}
