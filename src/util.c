@@ -92,7 +92,7 @@ void print_usage()
 	printf("\t-a   [SENDER ONLY] histogram 1st interval start value	[default: %d]\n", HIST_DEFAULT_START_AT);
 	printf("\t-l   [SENDER ONLY] length of histogram intervals	[default: %d]\n", HIST_DEFAULT_INTERVAL_LEN);
 	printf("\t-c   [SENDER ONLY] count of histogram intervals\t	[default: %d] [max: %d]\n", HIST_DEFAULT_INTERVAL_COUNT, HIST_MAX_INTERVAL_COUNT_USER);
-	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
+	printf("\t-P   [SENDER ONLY] prints 50th, 75th, 90th, 95th, 99th, 99.9th, 99.99th, 99.999th percentile of latencies\n");
 	printf("\t     Dump latency frequency table to a json file if specified after '-P'\n");
 
 	printf("\t-V   Verbose mode\n");
