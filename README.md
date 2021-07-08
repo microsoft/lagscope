@@ -115,7 +115,7 @@ On NODE2 (the sender), run:
 ```
 ./lagscope -s192.168.4.1 -P
 ```
-(Translation: Run lagscope as a sender. Prints these percentiles of the latencies: 50%, 75%, 90%, 99%, 99.9%, 99.99%, 99.999%.)
+(Translation: Run lagscope as a sender. Prints these percentiles of the latencies: 50%, 75%, 90%, 95%, 99%, 99.9%, 99.99%, 99.999%.)
 
 Option for dumping the latency frequency table into a JSON file, run:
 ```
@@ -140,6 +140,8 @@ Percentile       Latency(us)
      50%         80
      75%         102
      90%         113
+     95%         142
+     99%         210
    99.9%         410
   99.99%         2566
  99.999%         3921
@@ -159,6 +161,8 @@ Percentile       Latency(us)
      50%         80
      75%         102
      90%         113
+     95%         142
+     99%         210
    99.9%         410
   99.99%         2566
  99.999%         3921

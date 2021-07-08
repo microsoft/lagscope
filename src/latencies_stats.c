@@ -76,7 +76,7 @@ int process_latencies(unsigned long max_latency)
 int show_percentile(unsigned long max_latency, unsigned long n_pings)
 {
     unsigned int i = 0;
-    double percentile_array[] = {50, 75, 90, 99.9, 99.99, 99.999};
+    double percentile_array[] = {50, 75, 90, 95, 99, 99.9, 99.99, 99.999};
     size_t percentile_array_size = sizeof(percentile_array) / sizeof(percentile_array[0]);
     int percentile_idx = 0;
 
